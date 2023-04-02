@@ -8,6 +8,7 @@ interface StudentQuery {
 	hasChildren: SBoolean;
 	minScholarship: number | null;
 	maxScholarship: number | null;
+	groupIds: number[];
 }
 
 interface Student {
@@ -19,6 +20,12 @@ interface Student {
 	gender: Gender;
 	hasChildren: boolean;
 	scholarship: number;
+	groupId: number;
+}
+
+interface Group {
+	id: number;
+	name: string;
 }
 
 function getQuery<T>(name: string, t: T): string {
@@ -36,7 +43,13 @@ async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promi
 						   getQuery("maxScholarship", query.maxScholarship)
 						   ,
 	{
-		method: 'GET',
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			groups: query.groupIds ? query.groupIds : [],
+		}),
 		signal: abortSignal
 	});
 	try {
@@ -52,13 +65,52 @@ async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promi
 	}
 }
 
+async function getGroup(id: number, abortSignal: AbortSignal): Promise<Group | null> {
+	const response = fetch(`/api/group/?id=${id}`, {
+		method: 'GET',
+		signal: abortSignal,
+	});
+	try {
+		const status = (await response).status;
+		if (status !== 200) {
+			console.log(`Status ${status}`);
+			return null;
+		}
+		return (await (await response).json()) as Promise<Group>;
+	} catch(e) {
+		console.log(e);
+		return null;
+	}
+}
+
+async function getGroups(abortSignal: AbortSignal): Promise<Group[] | null> {
+	const response = fetch(`/api/groups/`, {
+		method: 'GET',
+		signal: abortSignal,
+	});
+	try {
+		const status = (await response).status;
+		if (status !== 200) {
+			console.log(`Status ${status}`);
+			return null;
+		}
+		return (await (await response).json()) as Promise<Group[]>;
+	} catch(e) {
+		console.log(e);
+		return null;
+	}
+}
+
 export type {
 	SBoolean,
 	Gender, 
 	StudentQuery,
 	Student,
+	Group,
 }
 
 export {
 	getStudents,
+	getGroup,
+	getGroups,
 }

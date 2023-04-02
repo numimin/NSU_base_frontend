@@ -10,7 +10,8 @@ function StudentsPage() {
 		age: null,
 		hasChildren: "NONE",
 		minScholarship: null,
-		maxScholarship: null
+		maxScholarship: null,
+		groupIds: []
 	});
 	const [students, setStudents] = useState<Student[]>([]);
 

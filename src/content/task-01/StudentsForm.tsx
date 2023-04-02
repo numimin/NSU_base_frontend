@@ -1,5 +1,5 @@
-import {useState} from 'react';
-import {StudentQuery, Gender, SBoolean} from '../../api/nsu_base';
+import {useState, useEffect} from 'react';
+import {StudentQuery, Gender, SBoolean, Group, getGroups} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 
 function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuery) => void}) {
@@ -9,6 +9,8 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 	const [hasChildren, setHasChildren] = useState<SBoolean>(props.query.hasChildren);
 	const [minScholarship, setMinScholarship] = useState<number | null>(props.query.minScholarship);
 	const [maxScholarship, setMaxScholarship] = useState<number | null>(props.query.maxScholarship);
+	const [groupIds, setGroupIds] = useState<number[]>(props.query.groupIds);
+	const [groups, setGroups] = useState<Group[] | null>(null);
 
 	const onChange = (params: {
 		gender?: Gender,
@@ -16,7 +18,8 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 		age?: number | null,
 		hasChildren?: SBoolean,
 		minScholarship?: number | null,
-		maxScholarship?: number | null
+		maxScholarship?: number | null,
+		groupIds?: number[],
 	} = {}) => {
 		props.onChange({
 			gender: params.gender || gender,
@@ -25,8 +28,18 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 			hasChildren: params.hasChildren || hasChildren,
 			minScholarship: params.minScholarship === undefined ? minScholarship : params.minScholarship,
 			maxScholarship: params.maxScholarship === undefined ? maxScholarship : params.maxScholarship,
+			groupIds: params.groupIds === undefined ? groupIds : params.groupIds,
 		});
 	}
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		(async () => {
+			setGroups(await getGroups(controller.signal));
+			controller = null;
+		}) ();
+		return () => controller?.abort();
+	}, []);
 
 	return <form>
 		<ol>
@@ -75,6 +88,40 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					setMaxScholarship(newMaxScholarship);
 					onChange({maxScholarship: newMaxScholarship});
 				}}/>
+			</li>
+			<li>
+				{
+					groups && <>
+						<h2>Группы:</h2>
+						<ol>
+							{
+								groups.map(group => {
+									return <li key={group.id}>
+										<input type="checkbox" 
+											   id={`group${group.id}`} 
+											   checked={groupIds.includes(group.id)}
+											   onChange={e => {
+											   	if (e.target.checked) {
+											   		const newGroupIds = [...groupIds, group.id];
+											   		setGroupIds(newGroupIds);
+											   		onChange({groupIds: newGroupIds});
+											   	} else {
+											   		let newGroupIds = [...groupIds];
+											   		const index = newGroupIds.indexOf(group.id);
+											   		if (index !== -1) {
+											   			newGroupIds.splice(index, 1)
+											   			setGroupIds(newGroupIds);
+											   			onChange({groupIds: newGroupIds});
+											   		}
+											   	}
+											   }}/>
+										<label htmlFor={`group${group.id}`}>{group.name}</label>
+									</li>
+								})
+							}
+						</ol>
+					</>
+				}
 			</li>
 		</ol>
 	</form>;
