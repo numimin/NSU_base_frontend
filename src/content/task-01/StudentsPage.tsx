@@ -5,7 +5,12 @@ import {Students} from './Students';
 
 function StudentsPage() {
 	const [query, setQuery] = useState<StudentQuery>({
-		gender: "NONE"
+		gender: "NONE",
+		year: null,
+		age: null,
+		hasChildren: "NONE",
+		minScholarship: null,
+		maxScholarship: null
 	});
 	const [students, setStudents] = useState<Student[]>([]);
 
@@ -15,9 +20,9 @@ function StudentsPage() {
 			if (!query) return;
 			const response = await getStudents(query, controller.signal);
 			setStudents(response ? response : []);
-			console.log(response);				
 			controller = null;
 		}) ();
+		return () => controller?.abort();
 	}, [query]);
 
 	return <>
