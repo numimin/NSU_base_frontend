@@ -39,7 +39,6 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
 		(async () => {
-			if (!faculties) return;
 			setGroups(await getGroups(facultyIds, controller.signal));
 			controller = null;
 		}) ();

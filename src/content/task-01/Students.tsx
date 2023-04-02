@@ -9,9 +9,7 @@ function StudentView(props: {student: Student}) {
 		let controller: AbortController | null = new AbortController();
 		(async () => {
 			if (!group) return;
-			const response = await getFaculty(group.facultyId, controller.signal)
-			setFaculty(response);
-			console.log(response);
+			setFaculty(await getFaculty(group.facultyId, controller.signal));
 			controller = null;
 		}) ();
 		return () => controller?.abort();
@@ -20,16 +18,14 @@ function StudentView(props: {student: Student}) {
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
 		(async () => {
-			const response = await getGroup(student.groupId, controller.signal)
-			setGroup(response);
-			console.log(response);
+			setGroup(await getGroup(student.groupId, controller.signal));
 			controller = null;
 		}) ();
 		return () => controller?.abort();
 	}, [props.student]);
 
 	const student = props.student;
-	return <li key={student.id}>
+	return <li>
 		<p>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
 		{
 			faculty && <p>{faculty.name}</p>
@@ -50,7 +46,7 @@ function Students(props: {students: Student[]}) {
 		<ol>
 			{
 				props.students.map(student => {
-					return <StudentView student={student}/>
+					return <StudentView key={student.id} student={student}/>
 				})
 			}
 		</ol>
