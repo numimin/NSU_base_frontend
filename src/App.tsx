@@ -1,11 +1,13 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import StudentsPage from './content/task-01/StudentsPage';
 
 function App() {
-  return <>
-    
-  </>;
+  return <ol>
+    <li>
+      <StudentsPage/>
+    </li>
+  </ol>;
 }
 
 export default App;
