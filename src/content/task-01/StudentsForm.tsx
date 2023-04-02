@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {StudentQuery, Gender, SBoolean, Group, getGroups} from '../../api/nsu_base';
+import {StudentQuery, Gender, SBoolean, Group, getGroups, Faculty, getFaculties} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 
 function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuery) => void}) {
@@ -9,6 +9,8 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 	const [hasChildren, setHasChildren] = useState<SBoolean>(props.query.hasChildren);
 	const [minScholarship, setMinScholarship] = useState<number | null>(props.query.minScholarship);
 	const [maxScholarship, setMaxScholarship] = useState<number | null>(props.query.maxScholarship);
+	const [facultyIds, setFacultyIds] = useState<number[]>(props.query.facultyIds);
+	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
 	const [groupIds, setGroupIds] = useState<number[]>(props.query.groupIds);
 	const [groups, setGroups] = useState<Group[] | null>(null);
 
@@ -20,6 +22,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 		minScholarship?: number | null,
 		maxScholarship?: number | null,
 		groupIds?: number[],
+		facultyIds?: number[],
 	} = {}) => {
 		props.onChange({
 			gender: params.gender || gender,
@@ -29,13 +32,24 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 			minScholarship: params.minScholarship === undefined ? minScholarship : params.minScholarship,
 			maxScholarship: params.maxScholarship === undefined ? maxScholarship : params.maxScholarship,
 			groupIds: params.groupIds === undefined ? groupIds : params.groupIds,
+			facultyIds: params.facultyIds === undefined ? facultyIds : params.facultyIds,
 		});
 	}
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
 		(async () => {
-			setGroups(await getGroups(controller.signal));
+			if (!faculties) return;
+			setGroups(await getGroups(facultyIds, controller.signal));
+			controller = null;
+		}) ();
+		return () => controller?.abort();
+	}, [facultyIds]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		(async () => {
+			setFaculties(await getFaculties(controller.signal));
 			controller = null;
 		}) ();
 		return () => controller?.abort();
@@ -88,6 +102,40 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					setMaxScholarship(newMaxScholarship);
 					onChange({maxScholarship: newMaxScholarship});
 				}}/>
+			</li>
+			<li>
+				{
+					faculties && <>
+						<h2>Группы:</h2>
+						<ol>
+							{
+								faculties.map(faculty => {
+									return <li key={faculty.id}>
+										<input type="checkbox" 
+											   id={`faculty${faculty.id}`} 
+											   checked={facultyIds.includes(faculty.id)}
+											   onChange={e => {
+											   	if (e.target.checked) {
+											   		const newFacultyIds = [...facultyIds, faculty.id];
+											   		setFacultyIds(newFacultyIds);
+											   		onChange({facultyIds: newFacultyIds});
+											   	} else {
+											   		let newFacultyIds = [...facultyIds];
+											   		const index = newFacultyIds.indexOf(faculty.id);
+											   		if (index !== -1) {
+											   			newFacultyIds.splice(index, 1)
+											   			setFacultyIds(newFacultyIds);
+											   			onChange({facultyIds: newFacultyIds});
+											   		}
+											   	}
+											   }}/>
+										<label htmlFor={`faculty${faculty.id}`}>{faculty.name}</label>
+									</li>
+								})
+							}
+						</ol>
+					</>
+				}
 			</li>
 			<li>
 				{

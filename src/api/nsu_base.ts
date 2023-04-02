@@ -9,6 +9,7 @@ interface StudentQuery {
 	minScholarship: number | null;
 	maxScholarship: number | null;
 	groupIds: number[];
+	facultyIds: number[];
 }
 
 interface Student {
@@ -26,10 +27,30 @@ interface Student {
 interface Group {
 	id: number;
 	name: string;
+	facultyId: number;
+}
+
+interface Faculty {
+	id: number;
+	name: string;
 }
 
 function getQuery<T>(name: string, t: T): string {
 	return t !== null && t !== undefined ? `&${name}=${t}` : "";
+}
+
+async function get<T>(response: Promise<Response>): Promise<T | null> {
+	try {
+		const status = (await response).status;
+		if (status !== 200) {
+			console.log(`Status: ${status}`);
+			return null;
+		}
+		return (await (await response).json()) as Promise<T>;
+	} catch (e) {
+		console.log(e);
+		return null;
+	}
 }
 
 async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promise<Student[] | null> {
@@ -49,20 +70,11 @@ async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promi
 		},
 		body: JSON.stringify({
 			groups: query.groupIds ? query.groupIds : [],
+			faculties: query.facultyIds ? query.facultyIds : [],
 		}),
 		signal: abortSignal
 	});
-	try {
-		const status = (await response).status;
-		if (status !== 200) {
-			console.log(`Status ${status}`);
-			return null;
-		}
-		return (await (await response).json()) as Promise<Student[]>;
-	} catch(e) {
-		console.log(e);
-		return null;
-	}
+	return get<Student[]>(response);
 }
 
 async function getGroup(id: number, abortSignal: AbortSignal): Promise<Group | null> {
@@ -70,35 +82,37 @@ async function getGroup(id: number, abortSignal: AbortSignal): Promise<Group | n
 		method: 'GET',
 		signal: abortSignal,
 	});
-	try {
-		const status = (await response).status;
-		if (status !== 200) {
-			console.log(`Status ${status}`);
-			return null;
-		}
-		return (await (await response).json()) as Promise<Group>;
-	} catch(e) {
-		console.log(e);
-		return null;
-	}
+	return get<Group>(response);
 }
 
-async function getGroups(abortSignal: AbortSignal): Promise<Group[] | null> {
+async function getGroups(facultyIds: number[], abortSignal: AbortSignal): Promise<Group[] | null> {
 	const response = fetch(`/api/groups/`, {
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			faculties: facultyIds ? facultyIds : [],
+		}),
+		signal: abortSignal,
+	});
+	return get<Group[]>(response);
+}
+
+async function getFaculty(id: number, abortSignal: AbortSignal): Promise<Faculty | null> {
+	const response = fetch(`/api/faculty/?id=${id}`, {
 		method: 'GET',
 		signal: abortSignal,
 	});
-	try {
-		const status = (await response).status;
-		if (status !== 200) {
-			console.log(`Status ${status}`);
-			return null;
-		}
-		return (await (await response).json()) as Promise<Group[]>;
-	} catch(e) {
-		console.log(e);
-		return null;
-	}
+	return get<Faculty>(response);
+}
+
+async function getFaculties(abortSignal: AbortSignal): Promise<Faculty[] | null> {
+	const response = fetch(`/api/faculties/`, {
+		method: 'GET',
+		signal: abortSignal,
+	});
+	return get<Faculty[]>(response);
 }
 
 export type {
@@ -107,10 +121,13 @@ export type {
 	StudentQuery,
 	Student,
 	Group,
+	Faculty,
 }
 
 export {
 	getStudents,
 	getGroup,
 	getGroups,
+	getFaculty,
+	getFaculties,
 }

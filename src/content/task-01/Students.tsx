@@ -1,13 +1,28 @@
 import {useState, useEffect} from 'react';
-import {Student, Group, getGroup} from '../../api/nsu_base';
+import {Student, Group, getGroup, Faculty, getFaculty} from '../../api/nsu_base';
 
 function StudentView(props: {student: Student}) {
 	const [group, setGroup] = useState<Group | null>(null);
+	const [faculty, setFaculty] = useState<Faculty | null>(null);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
 		(async () => {
-			setGroup(await getGroup(student.groupId, controller.signal));
+			if (!group) return;
+			const response = await getFaculty(group.facultyId, controller.signal)
+			setFaculty(response);
+			console.log(response);
+			controller = null;
+		}) ();
+		return () => controller?.abort();
+	}, [group])
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		(async () => {
+			const response = await getGroup(student.groupId, controller.signal)
+			setGroup(response);
+			console.log(response);
 			controller = null;
 		}) ();
 		return () => controller?.abort();
@@ -16,6 +31,9 @@ function StudentView(props: {student: Student}) {
 	const student = props.student;
 	return <li key={student.id}>
 		<p>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
+		{
+			faculty && <p>{faculty.name}</p>
+		}
 		{
 			group && <p>{`Группа ${group.name}`}</p>
 		}
