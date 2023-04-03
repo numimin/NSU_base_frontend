@@ -1,5 +1,5 @@
 import {useState, useEffect} from 'react';
-import {TeachersQuery, Category, Gender, SBoolean, DateStruct} from '../../api/nsu_base';
+import {TeachersQuery, Category, Gender, SBoolean, DateStruct, Faculty, Department, getDepartments, getFaculties} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 import DateForm from '../forms/DateForm';
 
@@ -12,6 +12,10 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 	const [graduateStudent, setGraduateStudent] = useState<SBoolean>(props.query.graduateStudent);
 	const [phdThesisStartDate, setPhdThesisStartDate] = useState<DateStruct | null>(props.query.phdThesisStartDate);
 	const [phdThesisEndDate, setPhdThesisEndDate] = useState<DateStruct | null>(props.query.phdThesisEndDate);
+	const [facultyIds, setFacultyIds] = useState<number[]>(props.query.facultyIds);
+	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [departmentIds, setDepartmentIds] = useState<number[]>(props.query.departmentIds);
+	const [departments, setDepartments] = useState<Department[] | null>(null);
 
 	const onChange = (params: {
 		category?: Category,
@@ -22,6 +26,8 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 		graduateStudent?: SBoolean,
 		phdThesisStartDate?: DateStruct | null,
 		phdThesisEndDate?: DateStruct | null,
+		departmentIds?: number[],
+		facultyIds?: number[],
 	} = {}) => {
 		props.onChange({
 			category: params.category || category,
@@ -32,10 +38,29 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 			graduateStudent: params.graduateStudent || graduateStudent,
 			phdThesisStartDate: params.phdThesisStartDate === undefined ? phdThesisStartDate : params.phdThesisStartDate,
 			phdThesisEndDate: params.phdThesisEndDate === undefined ? phdThesisEndDate : params.phdThesisEndDate,
-			facultyIds: [],
-			departmentIds: []
+			facultyIds: params.facultyIds === undefined ? facultyIds : params.facultyIds,
+			departmentIds: params.departmentIds === undefined ? departmentIds : params.departmentIds
 		});
 	}
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		(async () => {
+			if (!facultyIds) return;
+			setDepartments(await getDepartments(facultyIds, controller.signal));
+			controller = null;
+		}) ();
+		return () => controller?.abort();
+	}, [facultyIds]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		(async () => {
+			setFaculties(await getFaculties(controller.signal));
+			controller = null;
+		}) ();
+		return () => controller?.abort();
+	}, []);
 
 	const createDate = (dateStruct: DateStruct | null) => {
 		const date = new Date();
@@ -106,24 +131,96 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 					<option value="FALSE">Нет</option>
 				</select>
 			</li>
-			<DateForm name={"Дата защиты >="} date={createDate(phdThesisStartDate)} onChange={date => {
-				const newDateStruct = {
-					day: date.getDate(),
-					month: date.getMonth(),
-					year: date.getFullYear()
-				};
-				setPhdThesisStartDate(newDateStruct); 
-				onChange({phdThesisStartDate: newDateStruct});
-			}}/>
-			<DateForm name={"Дата защиты <="} date={createDate(phdThesisEndDate)} onChange={date => {
-				const newDateStruct = {
-					day: date.getDate(),
-					month: date.getMonth(),
-					year: date.getFullYear()
-				};
-				setPhdThesisEndDate(newDateStruct); 
-				onChange({phdThesisEndDate: newDateStruct});
-			}}/>
+			<li>
+				<DateForm name={"Дата защиты >="} date={createDate(phdThesisStartDate)} onChange={date => {
+					const newDateStruct = {
+						day: date.getDate(),
+						month: date.getMonth(),
+						year: date.getFullYear()
+					};
+					setPhdThesisStartDate(newDateStruct); 
+					onChange({phdThesisStartDate: newDateStruct});
+				}}/>
+			</li>
+			<li>
+				<DateForm name={"Дата защиты <="} date={createDate(phdThesisEndDate)} onChange={date => {
+					const newDateStruct = {
+						day: date.getDate(),
+						month: date.getMonth(),
+						year: date.getFullYear()
+					};
+					setPhdThesisEndDate(newDateStruct); 
+					onChange({phdThesisEndDate: newDateStruct});
+				}}/>
+			</li>
+			<li>
+				{
+					faculties && <>
+						<h2>Факультеты:</h2>
+						<ol>
+							{
+								faculties.map(faculty => {
+									return <li key={faculty.id}>
+										<input type="checkbox" 
+											   id={`faculty${faculty.id}`} 
+											   checked={facultyIds.includes(faculty.id)}
+											   onChange={e => {
+											   	if (e.target.checked) {
+											   		const newFacultyIds = [...facultyIds, faculty.id];
+											   		setFacultyIds(newFacultyIds);
+											   		onChange({facultyIds: newFacultyIds});
+											   	} else {
+											   		let newFacultyIds = [...facultyIds];
+											   		const index = newFacultyIds.indexOf(faculty.id);
+											   		if (index !== -1) {
+											   			newFacultyIds.splice(index, 1)
+											   			setFacultyIds(newFacultyIds);
+											   			onChange({facultyIds: newFacultyIds});
+											   		}
+											   	}
+											   }}/>
+										<label htmlFor={`faculty${faculty.id}`}>{faculty.name}</label>
+									</li>
+								})
+							}
+						</ol>
+					</>
+				}
+			</li>
+			<li>
+				{
+					departments && <>
+						<h2>Кафедры:</h2>
+						<ol>
+							{
+								departments.map(department => {
+									return <li key={department.id}>
+										<input type="checkbox" 
+											   id={`department${department.id}`} 
+											   checked={departmentIds.includes(department.id)}
+											   onChange={e => {
+											   	if (e.target.checked) {
+											   		const newDepartmentIds = [...departmentIds, department.id];
+											   		setDepartmentIds(newDepartmentIds);
+											   		onChange({departmentIds: newDepartmentIds});
+											   	} else {
+											   		let newDepartmentIds = [...departmentIds];
+											   		const index = newDepartmentIds.indexOf(department.id);
+											   		if (index !== -1) {
+											   			newDepartmentIds.splice(index, 1)
+											   			setDepartmentIds(newDepartmentIds);
+											   			onChange({departmentIds: newDepartmentIds});
+											   		}
+											   	}
+											   }}/>
+										<label htmlFor={`group${department.id}`}>{department.name}</label>
+									</li>
+								})
+							}
+						</ol>
+					</>
+				}
+			</li>
 		</ol>
 	</form>;
 }

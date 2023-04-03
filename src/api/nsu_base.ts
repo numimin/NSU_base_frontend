@@ -188,6 +188,27 @@ async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Prom
 	return get<Teacher[]>(response);
 }
 
+async function getDepartments(facultyIds: number[], abortSignal: AbortSignal): Promise<Department[] | null> {
+	const response = fetch(`/api/departments/`, {
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			faculties: facultyIds ? facultyIds : [],
+		}),
+		signal: abortSignal,
+	});
+	return get<Department[]>(response);
+}
+
+async function getDepartment(id: number, abortSignal: AbortSignal): Promise<Department | null> {
+	const response = fetch(`/api/department/?id=${id}`, {
+		method: 'GET',
+		signal: abortSignal,
+	});
+	return get<Department>(response);
+}
 
 export type {
 	SBoolean,
@@ -211,4 +232,6 @@ export {
 	getFaculty,
 	getFaculties,
 	getTeachers,
+	getDepartments,
+	getDepartment,
 }
