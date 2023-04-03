@@ -225,6 +225,35 @@ async function getDissertations(facultyIds: number[], departmentIds: number[], a
 	return get<string[]>(response);
 }
 
+interface DepartmentLessonQuery {
+	groupId: number | null;
+	course: number | null;
+	facultyId: number | null;
+	term: number | null;
+	start: DateStruct | null;
+	end: DateStruct | null;
+}
+
+async function getDepartmentsFromLessons(query: DepartmentLessonQuery, abortSignal: AbortSignal): Promise<Department[] | null> {
+	console.log(query);
+	const response = fetch("/api/department_lessons/?" +
+		getQuery("groupId", query.groupId) + 
+		getQuery("course", query.course) + 
+		getQuery("facultyId", query.facultyId) + 
+		getQuery("term", query.term), {
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: query.start && query.end && JSON.stringify({
+				start: query.start,
+				end: query.end
+			}),
+			signal: abortSignal,
+		});
+	return get<Department[]>(response);
+}
+
 export type {
 	SBoolean,
 	Gender, 
@@ -238,6 +267,7 @@ export type {
 	DepartmentsQuery,
 	Category,
 	DateStruct,
+	DepartmentLessonQuery,
 }
 
 export {
@@ -250,4 +280,5 @@ export {
 	getDepartments,
 	getDepartment,
 	getDissertations,
+	getDepartmentsFromLessons,
 }
