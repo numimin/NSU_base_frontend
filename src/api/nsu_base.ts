@@ -115,6 +115,80 @@ async function getFaculties(abortSignal: AbortSignal): Promise<Faculty[] | null>
 	return get<Faculty[]>(response);
 }
 
+type Category = "NONE" | "ASSISTANT" | "ASSISTANT_PROFESSOR" | "PROFESSOR"
+
+interface DateStruct {
+	year: number;
+	month: number;
+	day: number;
+}
+
+interface Teacher {
+	id: number;
+	firstname: string;
+	lastname: string;
+	patronymic: string;
+	category: Category;
+	gender: Gender;
+	hasChildren: boolean;
+	salary: number;
+	graduateStudent: boolean;
+	phdThesisDate: string;
+	departmentId: number;
+}
+
+interface TeachersQuery {
+	category: Category;
+	gender: Gender;
+	hasChildren: SBoolean;
+	minSalary: number | null;
+	maxSalary: number | null;
+	graduateStudent: SBoolean;
+	facultyIds: number[];
+	departmentIds: number[];
+	phdThesisStartDate: DateStruct | null;
+	phdThesisEndDate: DateStruct | null;
+}
+
+interface Department {
+	id: number;
+	name: string;
+	facultyId: number;
+}
+
+interface DepartmentsQuery {
+	facultyIds: number[];
+}
+
+async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Promise<Teacher[] | null> {
+	console.log(query);
+	const category = query.category === "NONE" ? "" : `category=${query.category}`
+	const gender = query.gender === "NONE" ? "" : `&gender=${query.gender}`
+	const hasChildren = query.hasChildren === "NONE" ? "" : `&hasChildren=${query.hasChildren.toLowerCase()}`
+	const graduateStudent = query.graduateStudent === "NONE" ? "" : `&graduateStudent=${query.graduateStudent.toLowerCase()}`
+	const response = fetch(`/api/teachers/?${gender}` + 
+						   category +
+						   hasChildren +
+						   getQuery("minSalary", query.minSalary) +
+						   getQuery("maxSalary", query.maxSalary) +
+						   graduateStudent,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			faculties: query.facultyIds || [],
+			departments: query.departmentIds || [],
+			phdThesisStartDate: query.phdThesisStartDate || {year: -1, month: -1, day: -1},
+			phdThesisEndDate: query.phdThesisEndDate || {year: -1, month: -1, day: -1}
+		}),
+		signal: abortSignal
+	});
+	return get<Teacher[]>(response);
+}
+
+
 export type {
 	SBoolean,
 	Gender, 
@@ -122,6 +196,12 @@ export type {
 	Student,
 	Group,
 	Faculty,
+	Teacher,
+	Department,
+	TeachersQuery,
+	DepartmentsQuery,
+	Category,
+	DateStruct,
 }
 
 export {
@@ -130,4 +210,5 @@ export {
 	getGroups,
 	getFaculty,
 	getFaculties,
+	getTeachers,
 }

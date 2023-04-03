@@ -105,7 +105,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 			<li>
 				{
 					faculties && <>
-						<h2>Группы:</h2>
+						<h2>Факультеты:</h2>
 						<ol>
 							{
 								faculties.map(faculty => {

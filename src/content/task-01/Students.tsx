@@ -42,7 +42,7 @@ function StudentView(props: {student: Student}) {
 
 function Students(props: {students: Student[]}) {
 	return <>
-		<h2>Students:</h2>
+		<h2>Студенты:</h2>
 		<ol>
 			{
 				props.students.map(student => {
