@@ -210,6 +210,21 @@ async function getDepartment(id: number, abortSignal: AbortSignal): Promise<Depa
 	return get<Department>(response);
 }
 
+async function getDissertations(facultyIds: number[], departmentIds: number[], abortSignal: AbortSignal): Promise<string[] | null> {
+	const response = fetch("/api/dissertations", {
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify({
+			faculties: facultyIds ? facultyIds : [],
+			departments: departmentIds ? departmentIds : [],
+		}),
+		signal: abortSignal
+	})
+	return get<string[]>(response);
+}
+
 export type {
 	SBoolean,
 	Gender, 
@@ -234,4 +249,5 @@ export {
 	getTeachers,
 	getDepartments,
 	getDepartment,
+	getDissertations,
 }
