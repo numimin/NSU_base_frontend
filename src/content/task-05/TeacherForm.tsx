@@ -26,7 +26,7 @@ function LessonView(props: {lesson: Lesson, lessonId: number | null, onChange: (
 			   		props.onChange(lesson.id);
 			   	}
 			   }}/>
-			<label htmlFor={`faculty${lesson.id}`}>{lesson.name + groupName}</label>
+			<label htmlFor={`faculty${lesson.id}`}>{(lesson.type === "LECTURE" ? "(лек.) " : lesson.type === "PRACTICE" ? "(сем.) " : "(лаб.) ") + lesson.name + groupName}</label>
 		</li>;
 }
 
@@ -122,23 +122,6 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 			</li>
 			<li>
 				{
-				lessons && <>
-					<h2>Занятия:</h2>
-					<ol>
-						{
-							lessons.map(lesson => {
-								return <LessonView lesson={lesson} lessonId={lessonId} onChange={newId => {
-									setLessonId(newId);
-			   						onChange({lessonId: newId});
-								}}/>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
-			<li>
-				{
 					groups && <>
 						<h2>Группы:</h2>
 						<ol>
@@ -156,6 +139,23 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 											   }}/>
 										<label htmlFor={`group${group.id}`}>{group.name}</label>
 									</li>
+								})
+							}
+						</ol>
+					</>
+				}
+			</li>
+			<li>
+				{
+				lessons && <>
+					<h2>Занятия:</h2>
+					<ol>
+						{
+							lessons.map(lesson => {
+								return <LessonView lesson={lesson} lessonId={lessonId} onChange={newId => {
+									setLessonId(newId);
+			   						onChange({lessonId: newId});
+								}}/>
 								})
 							}
 						</ol>

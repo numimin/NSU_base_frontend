@@ -1,4 +1,4 @@
-	import {useState, useEffect} from 'react';
+import {useState, useEffect} from 'react';
 import {DepartmentLessonQuery, Group, Faculty, getFaculties, getGroups, DateStruct} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 import DateForm from '../forms/DateForm';

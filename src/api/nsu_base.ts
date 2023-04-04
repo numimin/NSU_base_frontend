@@ -253,6 +253,8 @@ async function getDepartmentsFromLessons(query: DepartmentLessonQuery, abortSign
 	return get<Department[]>(response);
 }
 
+type LessonType = "LECTURE" | "PRACTICE" | "LAB";
+
 interface Lesson {
 	id: number;
     name: string;
@@ -260,6 +262,7 @@ interface Lesson {
     groupId: number;
     term: number;
     course: number;
+    type: LessonType;
 }
 
 interface LessonQuery {
@@ -298,6 +301,26 @@ async function getTeacherLessons(query: TeacherLessonsQuery, abortSignal: AbortS
 	return get<Teacher[]>(response);
 }
 
+async function getTeachersFromPeriod(query: DepartmentLessonQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/teacher_period/?" +
+		getQuery("groupId", query.groupId) + 
+		getQuery("course", query.course) + 
+		getQuery("facultyId", query.facultyId) + 
+		getQuery("term", query.term), 
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: query.start && query.end && JSON.stringify({
+				start: query.start,
+				end: query.end
+			}),
+			signal: abortSignal,
+		});
+	return get<Teacher[]>(response);
+}
+
 export type {
 	SBoolean,
 	Gender, 
@@ -330,4 +353,5 @@ export {
 	getDepartmentsFromLessons,
 	getLessons,
 	getTeacherLessons,
+	getTeachersFromPeriod,
 }

@@ -5,9 +5,13 @@ import TeachersPage from './content/task-02/TeachersPage';
 import DissertationsPage from './content/task-03/DissertationsPage';
 import DepartmentsPage from './content/task-04/DepartmentsPage';
 import TeacherLessonsPage from './content/task-05/TeacherLessonsPage';
+import TeachersPeriodPage from './content/task-06/TeachersPeriodPage';
 
 function App() {
   return <ol>
+    <li>
+      <TeachersPeriodPage/>
+    </li>
     <li>
       <TeacherLessonsPage/>
     </li>
