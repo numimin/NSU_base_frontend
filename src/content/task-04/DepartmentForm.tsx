@@ -31,16 +31,6 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 		});			
 	}
 
-	const createDate = (dateStruct: DateStruct | null) => {
-		const date = new Date();
-		if (dateStruct) {
-			date.setDate(dateStruct.day);
-			date.setMonth(dateStruct.month);
-			date.setFullYear(dateStruct.year);
-		}
-		return date;
-	}
-
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
 		(async () => {
@@ -129,25 +119,16 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 				}}/>
 			</li>
 			<li>
-				<DateForm name={"Дата >="} date={createDate(start)} onChange={date => {
-					const newDateStruct = {
-						day: date.getDate(),
-						month: date.getMonth() + 1,
-						year: date.getFullYear()
-					};
-					setStart(newDateStruct); 
-					onChange({start: newDateStruct});
+				<DateForm name={"Дата >="} onChange={date => {
+					setStart(date); 
+					onChange({start: date});
+					console.log(date);
 				}}/>
 			</li>
 			<li>
-				<DateForm name={"Дата <="} date={createDate(end)} onChange={date => {
-					const newDateStruct = {
-						day: date.getDate(),
-						month: date.getMonth() + 1,
-						year: date.getFullYear()
-					};
-					setEnd(newDateStruct); 
-					onChange({end: newDateStruct});
+				<DateForm name={"Дата <="} onChange={date => {
+					setEnd(date); 
+					onChange({end: date});
 				}}/>
 			</li>
 		</ol>

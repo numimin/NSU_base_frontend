@@ -62,16 +62,6 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 		return () => controller?.abort();
 	}, []);
 
-	const createDate = (dateStruct: DateStruct | null) => {
-		const date = new Date();
-		if (dateStruct) {
-			date.setDate(dateStruct.day);
-			date.setMonth(dateStruct.month);
-			date.setFullYear(dateStruct.year);
-		}
-		return date;
-	}
-
 	return <form>
 		<ol>
 			<li>
@@ -132,25 +122,15 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 				</select>
 			</li>
 			<li>
-				<DateForm name={"Дата защиты >="} date={createDate(phdThesisStartDate)} onChange={date => {
-					const newDateStruct = {
-						day: date.getDate(),
-						month: date.getMonth(),
-						year: date.getFullYear()
-					};
-					setPhdThesisStartDate(newDateStruct); 
-					onChange({phdThesisStartDate: newDateStruct});
+				<DateForm name={"Дата >="} onChange={date => {
+					setPhdThesisStartDate(date);
+					onChange({phdThesisStartDate: date}); 
 				}}/>
 			</li>
 			<li>
-				<DateForm name={"Дата защиты <="} date={createDate(phdThesisEndDate)} onChange={date => {
-					const newDateStruct = {
-						day: date.getDate(),
-						month: date.getMonth(),
-						year: date.getFullYear()
-					};
-					setPhdThesisEndDate(newDateStruct); 
-					onChange({phdThesisEndDate: newDateStruct});
+				<DateForm name={"Дата <="} onChange={date => {
+					setPhdThesisEndDate(date); 
+					onChange({phdThesisEndDate: date});
 				}}/>
 			</li>
 			<li>

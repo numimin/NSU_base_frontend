@@ -161,11 +161,14 @@ interface DepartmentsQuery {
 }
 
 async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Promise<Teacher[] | null> {
-	console.log(query);
 	const category = query.category === "NONE" ? "" : `category=${query.category}`
 	const gender = query.gender === "NONE" ? "" : `&gender=${query.gender}`
 	const hasChildren = query.hasChildren === "NONE" ? "" : `&hasChildren=${query.hasChildren.toLowerCase()}`
 	const graduateStudent = query.graduateStudent === "NONE" ? "" : `&graduateStudent=${query.graduateStudent.toLowerCase()}`
+	query.phdThesisStartDate && query.phdThesisStartDate.day++;
+	query.phdThesisStartDate && query.phdThesisStartDate.month++;
+	query.phdThesisEndDate && query.phdThesisEndDate.day++;
+	query.phdThesisEndDate && query.phdThesisEndDate.month++;
 	const response = fetch(`/api/teachers/?${gender}` + 
 						   category +
 						   hasChildren +
@@ -235,12 +238,12 @@ interface DepartmentLessonQuery {
 }
 
 async function getDepartmentsFromLessons(query: DepartmentLessonQuery, abortSignal: AbortSignal): Promise<Department[] | null> {
-	console.log(query);
 	const response = fetch("/api/department_lessons/?" +
 		getQuery("groupId", query.groupId) + 
 		getQuery("course", query.course) + 
 		getQuery("facultyId", query.facultyId) + 
-		getQuery("term", query.term), {
+		getQuery("term", query.term), 
+		{
 			method: "POST",
 			headers: {
 				"Content-Type": "application/json"
