@@ -165,10 +165,6 @@ async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Prom
 	const gender = query.gender === "NONE" ? "" : `&gender=${query.gender}`
 	const hasChildren = query.hasChildren === "NONE" ? "" : `&hasChildren=${query.hasChildren.toLowerCase()}`
 	const graduateStudent = query.graduateStudent === "NONE" ? "" : `&graduateStudent=${query.graduateStudent.toLowerCase()}`
-	query.phdThesisStartDate && query.phdThesisStartDate.day++;
-	query.phdThesisStartDate && query.phdThesisStartDate.month++;
-	query.phdThesisEndDate && query.phdThesisEndDate.day++;
-	query.phdThesisEndDate && query.phdThesisEndDate.month++;
 	const response = fetch(`/api/teachers/?${gender}` + 
 						   category +
 						   hasChildren +

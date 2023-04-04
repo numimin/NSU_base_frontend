@@ -122,13 +122,13 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 				</select>
 			</li>
 			<li>
-				<DateForm name={"Дата >="} onChange={date => {
+				<DateForm name={"Дата защиты >="} onChange={date => {
 					setPhdThesisStartDate(date);
 					onChange({phdThesisStartDate: date}); 
 				}}/>
 			</li>
 			<li>
-				<DateForm name={"Дата <="} onChange={date => {
+				<DateForm name={"Дата защиты <="} onChange={date => {
 					setPhdThesisEndDate(date); 
 					onChange({phdThesisEndDate: date});
 				}}/>
