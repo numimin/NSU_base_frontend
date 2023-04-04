@@ -7,9 +7,13 @@ import DepartmentsPage from './content/task-04/DepartmentsPage';
 import TeacherLessonsPage from './content/task-05/TeacherLessonsPage';
 import TeachersPeriodPage from './content/task-06/TeachersPeriodPage';
 import StudentsWithMarksPage from './content/task-07/StudentsWithMarksPage';
+import StudentsOfCoursePage from './content/task-08/StudentsOfCoursePage';
 
 function App() {
   return <ol>
+    <li>
+      <StudentsOfCoursePage/>
+    </li>
     <li>
       <StudentsWithMarksPage/>
     </li>

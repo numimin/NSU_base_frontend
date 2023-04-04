@@ -359,6 +359,33 @@ async function getStudentsWithMarks(query: StudentsWithMarkQuery, abortSignal: A
 	return get<Student[]>(response);
 }
 
+interface StudentsOfCourseWithMarksQuery {
+	course: number | null;
+	facultyId: number | null;
+	term: number | null;
+	marks: number[] | null;
+	groupIds: number[] | null;
+}
+
+async function getStudentsOfCourseWithMarks(query: StudentsOfCourseWithMarksQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/students_of_course_with_marks/?" + 
+		getQuery("course", query.course) +
+		getQuery("facultyId", query.facultyId) + 
+		getQuery("term", query.term),
+	{
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: query.marks && query.groupIds && JSON.stringify({
+			marks: query.marks,
+			groupIds: query.groupIds,
+		}),
+		signal: abortSignal,
+	});
+	return get<Student[]>(response);
+}
+
 export type {
 	SBoolean,
 	Gender, 
@@ -377,6 +404,7 @@ export type {
 	LessonQuery,
 	TeacherLessonsQuery,
 	StudentsWithMarkQuery,
+	StudentsOfCourseWithMarksQuery,
 }
 
 export {
@@ -395,4 +423,5 @@ export {
 	getTeachersFromPeriod,
 	getStudentsWithMarks,
 	getLessonsPost,
+	getStudentsOfCourseWithMarks,
 }
