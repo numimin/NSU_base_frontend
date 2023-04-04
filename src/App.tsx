@@ -6,9 +6,13 @@ import DissertationsPage from './content/task-03/DissertationsPage';
 import DepartmentsPage from './content/task-04/DepartmentsPage';
 import TeacherLessonsPage from './content/task-05/TeacherLessonsPage';
 import TeachersPeriodPage from './content/task-06/TeachersPeriodPage';
+import StudentsWithMarksPage from './content/task-07/StudentsWithMarksPage';
 
 function App() {
   return <ol>
+    <li>
+      <StudentsWithMarksPage/>
+    </li>
     <li>
       <TeachersPeriodPage/>
     </li>

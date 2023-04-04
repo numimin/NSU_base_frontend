@@ -4,7 +4,7 @@ function Dissertations(props: {dissertations: string[]}) {
 		<ol>
 			{
 				props.dissertations.map(d => {
-					return <p>{d}</p>;
+					return <p key={d}>{d}</p>;
 				})
 			}
 		</ol>

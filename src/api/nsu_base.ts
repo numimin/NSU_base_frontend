@@ -281,6 +281,21 @@ async function getLessons(query: LessonQuery, abortSignal: AbortSignal) {
 	return get<Lesson[]>(response);
 }
 
+async function getLessonsPost(groupIds: number[] | null, abortSignal: AbortSignal) {
+	const response = fetch("/api/lessons_post",
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: groupIds && JSON.stringify({
+				groupIds: groupIds,
+			}),
+			signal: abortSignal,
+		});
+	return get<Lesson[]>(response);
+}
+
 interface TeacherLessonsQuery {
 	groupId: number | null;
 	course: number | null;
@@ -321,6 +336,29 @@ async function getTeachersFromPeriod(query: DepartmentLessonQuery, abortSignal: 
 	return get<Teacher[]>(response);
 }
 
+interface StudentsWithMarkQuery {
+	lessonId: number | null;
+	mark: number | null;
+	groupIds: number[] | null;
+}
+
+async function getStudentsWithMarks(query: StudentsWithMarkQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/students_with_marks/?" +
+		getQuery("lessonId", query.lessonId) +
+		getQuery("mark", query.mark),
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: query.groupIds && JSON.stringify({
+				groupIds: query.groupIds,
+			}),
+			signal: abortSignal,
+		});
+	return get<Student[]>(response);
+}
+
 export type {
 	SBoolean,
 	Gender, 
@@ -338,6 +376,7 @@ export type {
 	Lesson,
 	LessonQuery,
 	TeacherLessonsQuery,
+	StudentsWithMarkQuery,
 }
 
 export {
@@ -354,4 +393,6 @@ export {
 	getLessons,
 	getTeacherLessons,
 	getTeachersFromPeriod,
+	getStudentsWithMarks,
+	getLessonsPost,
 }

@@ -6,7 +6,7 @@ function Departments(props: {departments: Department[]}) {
 		<ol>
 			{
 				props.departments.map(department => {
-					return <li>
+					return <li key={department.id}>
 						<p>{department.name}</p>
 					</li>;
 				})

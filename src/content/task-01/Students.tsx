@@ -53,6 +53,4 @@ function Students(props: {students: Student[]}) {
 	</>;
 }
 
-export {
-	Students,
-}
+export default Students;

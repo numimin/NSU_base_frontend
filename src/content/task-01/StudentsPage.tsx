@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
 import {StudentQuery, Student, getStudents} from '../../api/nsu_base';
 import {StudentsForm} from './StudentsForm';
-import {Students} from './Students';
+import Students from './Students';
 
 function StudentsPage() {
 	const [query, setQuery] = useState<StudentQuery>({
