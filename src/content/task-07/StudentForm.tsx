@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import {Student, StudentsWithMarkQuery, getStudentsWithMarks, Group, Lesson, getLessonsPost, getGroups} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 import LessonView from '../forms/LessonView';
+import { IdCheckbox, convertToItem } from '../forms/IdCheckbox';
 
 function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: StudentsWithMarkQuery) => void}) {
 	const [lessonId, setLessonId] = useState<number | null>(props.query.lessonId);
@@ -67,46 +68,15 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 					</>
 				}
 			</li>
-			<li>
-				{
-					groups && <>
-						<h2>Группы:</h2>
-						<ol>
-							{
-								groups.map(group => {
-									return <li key={group.id}>
-										<input type="checkbox" 
-											   id={`group${group.id}`} 
-											   checked={groupIds ? groupIds.includes(group.id) : false}
-											   onChange={e => {
-											   	if (e.target.checked) {
-											   		let newGroupIds = [group.id];
-											   		if (groupIds) {
-											   			newGroupIds = [...groupIds, group.id]
-											   		}
-											   		setGroupIds(newGroupIds);
-											   		onChange({groupIds: newGroupIds});
-											   	} else {
-											   		let newGroupIds = [group.id];
-											   		if (groupIds) {
-											   			newGroupIds = [...groupIds]
-											   		}
-											   		const index = newGroupIds.indexOf(group.id);
-											   		if (index !== -1) {
-											   			newGroupIds.splice(index, 1)
-											   			setGroupIds(newGroupIds);
-											   			onChange({groupIds: newGroupIds});
-											   		}
-											   	}
-											   }}/>
-										<label htmlFor={`group${group.id}`}>{group.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
+			<IdCheckbox 
+				name="Группы:"
+				items={groups?.map(convertToItem)}
+				ids={groupIds}
+				setIds={newIds => {
+					setGroupIds(newIds);
+					onChange({groupIds: newIds});
+				}}
+				/>
 		</ol>
 	</form>;
 }

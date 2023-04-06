@@ -1,6 +1,7 @@
 import {useState, useEffect} from 'react';
 import {StudentQuery, Gender, SBoolean, Group, getGroups, Faculty, getFaculties} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
+import { IdCheckbox, convertToItem } from '../forms/IdCheckbox';
 
 function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuery) => void}) {
 	const [gender, setGender] = useState<Gender>(props.query.gender);
@@ -102,74 +103,24 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					onChange({maxScholarship: newMaxScholarship});
 				}}/>
 			</li>
-			<li>
-				{
-					faculties && <>
-						<h2>Факультеты:</h2>
-						<ol>
-							{
-								faculties.map(faculty => {
-									return <li key={faculty.id}>
-										<input type="checkbox" 
-											   id={`faculty${faculty.id}`} 
-											   checked={facultyIds.includes(faculty.id)}
-											   onChange={e => {
-											   	if (e.target.checked) {
-											   		const newFacultyIds = [...facultyIds, faculty.id];
-											   		setFacultyIds(newFacultyIds);
-											   		onChange({facultyIds: newFacultyIds});
-											   	} else {
-											   		let newFacultyIds = [...facultyIds];
-											   		const index = newFacultyIds.indexOf(faculty.id);
-											   		if (index !== -1) {
-											   			newFacultyIds.splice(index, 1)
-											   			setFacultyIds(newFacultyIds);
-											   			onChange({facultyIds: newFacultyIds});
-											   		}
-											   	}
-											   }}/>
-										<label htmlFor={`faculty${faculty.id}`}>{faculty.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
-			<li>
-				{
-					groups && <>
-						<h2>Группы:</h2>
-						<ol>
-							{
-								groups.map(group => {
-									return <li key={group.id}>
-										<input type="checkbox" 
-											   id={`group${group.id}`} 
-											   checked={groupIds.includes(group.id)}
-											   onChange={e => {
-											   	if (e.target.checked) {
-											   		const newGroupIds = [...groupIds, group.id];
-											   		setGroupIds(newGroupIds);
-											   		onChange({groupIds: newGroupIds});
-											   	} else {
-											   		let newGroupIds = [...groupIds];
-											   		const index = newGroupIds.indexOf(group.id);
-											   		if (index !== -1) {
-											   			newGroupIds.splice(index, 1)
-											   			setGroupIds(newGroupIds);
-											   			onChange({groupIds: newGroupIds});
-											   		}
-											   	}
-											   }}/>
-										<label htmlFor={`group${group.id}`}>{group.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
+			<IdCheckbox 
+				name="Факультеты:"
+				items={faculties?.map(convertToItem)}
+				ids={facultyIds}
+				setIds={newIds => {
+					setFacultyIds(newIds);
+					onChange({facultyIds: newIds});
+				}}
+				/>
+			<IdCheckbox 
+				name="Группы:"
+				items={groups?.map(convertToItem)}
+				ids={groupIds}
+				setIds={newIds => {
+					setGroupIds(newIds);
+					onChange({groupIds: newIds});
+				}}
+				/>
 		</ol>
 	</form>;
 }

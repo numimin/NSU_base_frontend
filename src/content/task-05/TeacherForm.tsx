@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import {TeacherLessonsQuery, Group, Lesson, Faculty, getGroups, getFaculties, getLessons, getGroup} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 import LessonView from '../forms/LessonView';
+import { IdRadio, convertToItem } from '../forms/IdCheckbox';
 
 function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: TeacherLessonsQuery) => void}) {
 	const [groupId, setGroupId] = useState<number | null>(props.query.groupId);
@@ -68,56 +69,24 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 					onChange({course: newCourse});
 				}}/>
 			</li>
-			<li>
-				{
-				faculties && <>
-					<h2>Факультеты:</h2>
-					<ol>
-						{
-							faculties.map(faculty => {
-								return <li key={faculty.id}>
-										<input type="radio" 
-										   id={`faculty${faculty.id}`} 
-										   checked={facultyId === faculty.id}
-										   onChange={e => {
-										   	if (e.target.checked) {
-										   		setFacultyId(faculty.id);
-										   		onChange({facultyId: faculty.id});
-										   	}
-										   }}/>
-										<label htmlFor={`faculty${faculty.id}`}>{faculty.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
-			<li>
-				{
-					groups && <>
-						<h2>Группы:</h2>
-						<ol>
-							{
-								groups.map(group => {
-									return <li key={group.id}>
-										<input type="radio" 
-											   id={`group${group.id}`} 
-											   checked={groupId === group.id}
-											   onChange={e => {
-											   	if (e.target.checked) {
-											   		setGroupId(group.id);
-											   		onChange({groupId: group.id});
-											   	}
-											   }}/>
-										<label htmlFor={`group${group.id}`}>{group.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
+			<IdRadio 
+				name="Факультеты:"
+				items={faculties?.map(convertToItem)}
+				id={facultyId}
+				setId={newId => {
+					setFacultyId(newId);
+					onChange({facultyId: newId});
+				}}
+				/>
+			<IdRadio 
+				name="Группы:"
+				items={groups?.map(convertToItem)}
+				id={groupId}
+				setId={newId => {
+					setGroupId(newId);
+					onChange({groupId: newId});
+				}}
+				/>
 			<li>
 				{
 				lessons && <>

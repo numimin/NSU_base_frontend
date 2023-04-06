@@ -2,6 +2,7 @@ import { queries } from "@testing-library/react";
 import { Faculty, StudentsOfCourseWithMarksQuery, getFaculties, getGroups } from "../../api/nsu_base";
 import {useState, useEffect} from 'react';
 import CheckedInput from "../forms/CheckedInput";
+import { IdCheckbox, IdRadio, Item, convertToItem } from "../forms/IdCheckbox";
 
 function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (query: StudentsOfCourseWithMarksQuery) => void}) {
     const [course, setCourse] = useState<number | null>(props.query.course);
@@ -67,106 +68,35 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 					onChange({term: newTerm});
 				}}/>
 			</li>
-            <li>
-                <ol>
-                    {
-                        allMarks.map(mark => {
-                            return <li key={mark}>
-                                <input type="checkbox"
-                                    id={`mark${mark}`}
-                                    checked={marks?.includes(mark)}
-                                    onChange={e => {
-                                        if (e.target.checked) {
-                                            let newMarks = [mark];
-                                            if (marks) {
-                                                newMarks = [...marks, mark]
-                                            }
-                                            setMarks(newMarks);
-                                            onChange({marks: newMarks});
-                                        } else {
-                                            let newMarks = [mark];
-                                            if (marks) {
-                                                newMarks = [...marks]
-                                            }
-                                            const index = newMarks.indexOf(mark);
-                                            if (index !== -1) {
-                                                newMarks.splice(index, 1)
-                                                setMarks(newMarks);
-                                                onChange({marks: newMarks});
-                                            }
-                                        }}
-                                    }/>
-                                    <label htmlFor={`mark${mark}`}>{mark}</label>
-                            </li>
-                        })
-                    }
-                </ol>
-            </li>
-            <li>
-				{
-				faculties && <>
-					<h2>Факультеты:</h2>
-					<ol>
-						{
-							faculties.map(faculty => {
-								return <li key={faculty.id}>
-										<input type="radio" 
-										   id={`faculty${faculty.id}`} 
-										   checked={facultyId === faculty.id}
-										   onChange={e => {
-										   	if (e.target.checked) {
-										   		setFacultyId(faculty.id);
-										   		onChange({facultyId: faculty.id});
-										   	}
-										   }}/>
-										<label htmlFor={`faculty${faculty.id}`}>{faculty.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
-            <li>
-				{
-					groups && <>
-						<h2>Группы:</h2>
-						<ol>
-							{
-								groups.map(group => {
-									return <li key={group.id}>
-										<input type="checkbox" 
-											   id={`group${group.id}`} 
-											   checked={groupIds ? groupIds.includes(group.id) : false}
-											   onChange={e => {
-											   	if (e.target.checked) {
-											   		let newGroupIds = [group.id];
-											   		if (groupIds) {
-											   			newGroupIds = [...groupIds, group.id]
-											   		}
-											   		setGroupIds(newGroupIds);
-											   		onChange({groupIds: newGroupIds});
-											   	} else {
-											   		let newGroupIds = [group.id];
-											   		if (groupIds) {
-											   			newGroupIds = [...groupIds]
-											   		}
-											   		const index = newGroupIds.indexOf(group.id);
-											   		if (index !== -1) {
-											   			newGroupIds.splice(index, 1)
-											   			setGroupIds(newGroupIds);
-											   			onChange({groupIds: newGroupIds});
-											   		}
-											   	}
-											   }}/>
-										<label htmlFor={`group${group.id}`}>{group.name}</label>
-									</li>
-								})
-							}
-						</ol>
-					</>
-				}
-			</li>
+            <IdCheckbox 
+				name="Группы:"
+				items={allMarks?.map(m => {
+					return {id: m, name: m + ""};
+				})}
+				ids={marks}
+				setIds={newIds => {
+					setMarks(newIds);
+					onChange({marks: newIds});
+				}}
+				/>
+            <IdRadio 
+				name="Факультеты:"
+				items={faculties?.map(convertToItem)}
+				id={facultyId}
+				setId={newId => {
+					setFacultyId(newId);
+					onChange({facultyId: newId});
+				}}
+				/>
+			<IdCheckbox 
+				name="Группы:"
+				items={groups?.map(convertToItem)}
+				ids={groupIds}
+				setIds={newIds => {
+					setGroupIds(newIds);
+					onChange({groupIds: newIds});
+				}}
+				/>
         </ol>
     </form>;
 }
