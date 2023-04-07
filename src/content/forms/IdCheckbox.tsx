@@ -10,6 +10,13 @@ function convertToItem(a: any): Item {
     }
 }
 
+export function convertToItemWithFunction(a: any, name?: (t: any) => string): Item {
+    return {
+        name: name ? name(a) : a.name,
+        id: a.id,
+    }
+}
+
 function IdRadio(props: {name: string, items: Item[] | null | undefined, id: number | null | undefined, setId: (id: number) => void}) {
     return <li>
         {

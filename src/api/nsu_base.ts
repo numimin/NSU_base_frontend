@@ -1,7 +1,7 @@
-type Gender = "NONE" | "MALE" | "FEMALE";
-type SBoolean = "NONE" | "TRUE" | "FALSE";
+export type Gender = "NONE" | "MALE" | "FEMALE";
+export type SBoolean = "NONE" | "TRUE" | "FALSE";
 
-interface StudentQuery {
+export interface StudentQuery {
 	gender: Gender;
 	year: number | null;
 	age: number | null;
@@ -12,7 +12,7 @@ interface StudentQuery {
 	facultyIds: number[];
 }
 
-interface Student {
+export interface Student {
 	id: number;
 	firstname: string;
 	lastname: string;
@@ -24,13 +24,13 @@ interface Student {
 	groupId: number;
 }
 
-interface Group {
+export interface Group {
 	id: number;
 	name: string;
 	facultyId: number;
 }
 
-interface Faculty {
+export interface Faculty {
 	id: number;
 	name: string;
 }
@@ -53,7 +53,7 @@ async function get<T>(response: Promise<Response>): Promise<T | null> {
 	}
 }
 
-async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promise<Student[] | null> {
+export async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promise<Student[] | null> {
 	const gender = query.gender === "NONE" ? "" : `gender=${query.gender}`
 	const hasChildren = query.hasChildren === "NONE" ? "" : `&hasChildren=${query.hasChildren.toLowerCase()}`
 	const response = fetch(`/api/students/?${gender}` + 
@@ -77,7 +77,7 @@ async function getStudents(query: StudentQuery, abortSignal: AbortSignal): Promi
 	return get<Student[]>(response);
 }
 
-async function getGroup(id: number, abortSignal: AbortSignal): Promise<Group | null> {
+export async function getGroup(id: number, abortSignal: AbortSignal): Promise<Group | null> {
 	const response = fetch(`/api/group/?id=${id}`, {
 		method: 'GET',
 		signal: abortSignal,
@@ -85,7 +85,7 @@ async function getGroup(id: number, abortSignal: AbortSignal): Promise<Group | n
 	return get<Group>(response);
 }
 
-async function getGroups(facultyIds: number[], abortSignal: AbortSignal): Promise<Group[] | null> {
+export async function getGroups(facultyIds: number[], abortSignal: AbortSignal): Promise<Group[] | null> {
 	const response = fetch(`/api/groups/`, {
 		method: 'POST',
 		headers: {
@@ -99,7 +99,7 @@ async function getGroups(facultyIds: number[], abortSignal: AbortSignal): Promis
 	return get<Group[]>(response);
 }
 
-async function getFaculty(id: number, abortSignal: AbortSignal): Promise<Faculty | null> {
+export async function getFaculty(id: number, abortSignal: AbortSignal): Promise<Faculty | null> {
 	const response = fetch(`/api/faculty/?id=${id}`, {
 		method: 'GET',
 		signal: abortSignal,
@@ -107,7 +107,7 @@ async function getFaculty(id: number, abortSignal: AbortSignal): Promise<Faculty
 	return get<Faculty>(response);
 }
 
-async function getFaculties(abortSignal: AbortSignal): Promise<Faculty[] | null> {
+export async function getFaculties(abortSignal: AbortSignal): Promise<Faculty[] | null> {
 	const response = fetch(`/api/faculties/`, {
 		method: 'GET',
 		signal: abortSignal,
@@ -115,15 +115,15 @@ async function getFaculties(abortSignal: AbortSignal): Promise<Faculty[] | null>
 	return get<Faculty[]>(response);
 }
 
-type Category = "NONE" | "ASSISTANT" | "ASSISTANT_PROFESSOR" | "PROFESSOR"
+export type Category = "NONE" | "ASSISTANT" | "ASSISTANT_PROFESSOR" | "PROFESSOR"
 
-interface DateStruct {
+export interface DateStruct {
 	year: number;
 	month: number;
 	day: number;
 }
 
-interface Teacher {
+export interface Teacher {
 	id: number;
 	firstname: string;
 	lastname: string;
@@ -137,7 +137,7 @@ interface Teacher {
 	departmentId: number;
 }
 
-interface TeachersQuery {
+export interface TeachersQuery {
 	category: Category;
 	gender: Gender;
 	hasChildren: SBoolean;
@@ -150,17 +150,17 @@ interface TeachersQuery {
 	phdThesisEndDate: DateStruct | null;
 }
 
-interface Department {
+export interface Department {
 	id: number;
 	name: string;
 	facultyId: number;
 }
 
-interface DepartmentsQuery {
+export interface DepartmentsQuery {
 	facultyIds: number[];
 }
 
-async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Promise<Teacher[] | null> {
+export async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Promise<Teacher[] | null> {
 	const category = query.category === "NONE" ? "" : `category=${query.category}`
 	const gender = query.gender === "NONE" ? "" : `&gender=${query.gender}`
 	const hasChildren = query.hasChildren === "NONE" ? "" : `&hasChildren=${query.hasChildren.toLowerCase()}`
@@ -187,7 +187,7 @@ async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Prom
 	return get<Teacher[]>(response);
 }
 
-async function getDepartments(facultyIds: number[], abortSignal: AbortSignal): Promise<Department[] | null> {
+export async function getDepartments(facultyIds: number[], abortSignal: AbortSignal): Promise<Department[] | null> {
 	const response = fetch(`/api/departments/`, {
 		method: 'POST',
 		headers: {
@@ -201,7 +201,7 @@ async function getDepartments(facultyIds: number[], abortSignal: AbortSignal): P
 	return get<Department[]>(response);
 }
 
-async function getDepartment(id: number, abortSignal: AbortSignal): Promise<Department | null> {
+export async function getDepartment(id: number, abortSignal: AbortSignal): Promise<Department | null> {
 	const response = fetch(`/api/department/?id=${id}`, {
 		method: 'GET',
 		signal: abortSignal,
@@ -209,7 +209,7 @@ async function getDepartment(id: number, abortSignal: AbortSignal): Promise<Depa
 	return get<Department>(response);
 }
 
-async function getDissertations(facultyIds: number[], departmentIds: number[], abortSignal: AbortSignal): Promise<string[] | null> {
+export async function getDissertations(facultyIds: number[], departmentIds: number[], abortSignal: AbortSignal): Promise<string[] | null> {
 	const response = fetch("/api/dissertations", {
 		method: "POST",
 		headers: {
@@ -224,7 +224,7 @@ async function getDissertations(facultyIds: number[], departmentIds: number[], a
 	return get<string[]>(response);
 }
 
-interface DepartmentLessonQuery {
+export interface DepartmentLessonQuery {
 	groupId: number | null;
 	course: number | null;
 	facultyId: number | null;
@@ -233,7 +233,7 @@ interface DepartmentLessonQuery {
 	end: DateStruct | null;
 }
 
-async function getDepartmentsFromLessons(query: DepartmentLessonQuery, abortSignal: AbortSignal): Promise<Department[] | null> {
+export async function getDepartmentsFromLessons(query: DepartmentLessonQuery, abortSignal: AbortSignal): Promise<Department[] | null> {
 	const response = fetch("/api/department_lessons/?" +
 		getQuery("groupId", query.groupId) + 
 		getQuery("course", query.course) + 
@@ -253,9 +253,9 @@ async function getDepartmentsFromLessons(query: DepartmentLessonQuery, abortSign
 	return get<Department[]>(response);
 }
 
-type LessonType = "LECTURE" | "PRACTICE" | "LAB";
+export type LessonType = "LECTURE" | "PRACTICE" | "LAB";
 
-interface Lesson {
+export interface Lesson {
 	id: number;
     name: string;
     teacherId: number;
@@ -265,12 +265,12 @@ interface Lesson {
     type: LessonType;
 }
 
-interface LessonQuery {
+export interface LessonQuery {
 	groupId: number | null;
 	course: number | null;
 }
 
-async function getLessons(query: LessonQuery, abortSignal: AbortSignal) {
+export async function getLessons(query: LessonQuery, abortSignal: AbortSignal) {
 	const response = fetch("/api/lessons/?" +
 		getQuery("groupId", query.groupId) +
 		getQuery("course", query.course),
@@ -281,7 +281,7 @@ async function getLessons(query: LessonQuery, abortSignal: AbortSignal) {
 	return get<Lesson[]>(response);
 }
 
-async function getLessonsPost(groupIds: number[] | null, abortSignal: AbortSignal) {
+export async function getLessonsPost(groupIds: number[] | null, abortSignal: AbortSignal) {
 	const response = fetch("/api/lessons_post",
 		{
 			method: "POST",
@@ -296,14 +296,14 @@ async function getLessonsPost(groupIds: number[] | null, abortSignal: AbortSigna
 	return get<Lesson[]>(response);
 }
 
-interface TeacherLessonsQuery {
+export interface TeacherLessonsQuery {
 	groupId: number | null;
 	course: number | null;
 	lessonId: number | null;
 	facultyId: number | null;
 }
 
-async function getTeacherLessons(query: TeacherLessonsQuery, abortSignal: AbortSignal) {
+export async function getTeacherLessons(query: TeacherLessonsQuery, abortSignal: AbortSignal) {
 	const response = fetch("/api/teacher_lessons/?" +
 		getQuery("groupId", query.groupId) +
 		getQuery("course", query.course) +
@@ -316,7 +316,7 @@ async function getTeacherLessons(query: TeacherLessonsQuery, abortSignal: AbortS
 	return get<Teacher[]>(response);
 }
 
-async function getTeachersFromPeriod(query: DepartmentLessonQuery, abortSignal: AbortSignal) {
+export async function getTeachersFromPeriod(query: DepartmentLessonQuery, abortSignal: AbortSignal) {
 	const response = fetch("/api/teacher_period/?" +
 		getQuery("groupId", query.groupId) + 
 		getQuery("course", query.course) + 
@@ -336,13 +336,13 @@ async function getTeachersFromPeriod(query: DepartmentLessonQuery, abortSignal: 
 	return get<Teacher[]>(response);
 }
 
-interface StudentsWithMarkQuery {
+export interface StudentsWithMarkQuery {
 	lessonId: number | null;
 	mark: number | null;
 	groupIds: number[] | null;
 }
 
-async function getStudentsWithMarks(query: StudentsWithMarkQuery, abortSignal: AbortSignal) {
+export async function getStudentsWithMarks(query: StudentsWithMarkQuery, abortSignal: AbortSignal) {
 	const response = fetch("/api/students_with_marks/?" +
 		getQuery("lessonId", query.lessonId) +
 		getQuery("mark", query.mark),
@@ -359,7 +359,7 @@ async function getStudentsWithMarks(query: StudentsWithMarkQuery, abortSignal: A
 	return get<Student[]>(response);
 }
 
-interface StudentsOfCourseWithMarksQuery {
+export interface StudentsOfCourseWithMarksQuery {
 	course: number | null;
 	facultyId: number | null;
 	term: number | null;
@@ -367,7 +367,7 @@ interface StudentsOfCourseWithMarksQuery {
 	groupIds: number[] | null;
 }
 
-async function getStudentsOfCourseWithMarks(query: StudentsOfCourseWithMarksQuery, abortSignal: AbortSignal) {
+export async function getStudentsOfCourseWithMarks(query: StudentsOfCourseWithMarksQuery, abortSignal: AbortSignal) {
 	const response = fetch("/api/students_of_course_with_marks/?" + 
 		getQuery("course", query.course) +
 		getQuery("facultyId", query.facultyId) + 
@@ -386,13 +386,13 @@ async function getStudentsOfCourseWithMarks(query: StudentsOfCourseWithMarksQuer
 	return get<Student[]>(response);
 }
 
-interface TeachersExamsQuery {
+export interface TeachersExamsQuery {
 	term: number | null;
 	groupIds: number[] | null;
 	lessonIds: number[] | null;
 }
 
-async function getTeachersByExams(query :TeachersExamsQuery, abortSignal: AbortSignal) {
+export async function getTeachersByExams(query :TeachersExamsQuery, abortSignal: AbortSignal) {
 	const response = fetch("/api/teachers_exams/?" + 
 		getQuery("term", query.term),
 		{
@@ -409,44 +409,33 @@ async function getTeachersByExams(query :TeachersExamsQuery, abortSignal: AbortS
 	return get<Teacher[]>(response);
 }
 
-export type {
-	SBoolean,
-	Gender, 
-	StudentQuery,
-	Student,
-	Group,
-	Faculty,
-	Teacher,
-	Department,
-	TeachersQuery,
-	DepartmentsQuery,
-	Category,
-	DateStruct,
-	DepartmentLessonQuery,
-	Lesson,
-	LessonQuery,
-	TeacherLessonsQuery,
-	StudentsWithMarkQuery,
-	StudentsOfCourseWithMarksQuery,
-	TeachersExamsQuery,
+export interface StudentsExamsQuery {
+	teacherId: number | null;
+	mark: number | null;
+	groupIds: number[] | null;
+	lessonIds: number[] | null;
+	terms: number[] | null;
+	start: DateStruct | null;
+	end: DateStruct | null;
 }
 
-export {
-	getStudents,
-	getGroup,
-	getGroups,
-	getFaculty,
-	getFaculties,
-	getTeachers,
-	getDepartments,
-	getDepartment,
-	getDissertations,
-	getDepartmentsFromLessons,
-	getLessons,
-	getTeacherLessons,
-	getTeachersFromPeriod,
-	getStudentsWithMarks,
-	getLessonsPost,
-	getStudentsOfCourseWithMarks,
-	getTeachersByExams,
+export async function getStudentsByExams(query: StudentsExamsQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/students_exams/?" + 
+		getQuery("teacherId", query.teacherId) +
+		getQuery("mark", query.mark),
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				groupIds: query.groupIds ? query.groupIds : [],
+				lessonIds: query.lessonIds ? query.lessonIds : [],
+				terms: query.terms ? query.terms : [],
+				start: query.start ? query.start : {year: -1, month: -1, day: -1},
+				end: query.end ? query.end : {year: -1, month: -1, day: -1},
+			}),
+			signal: abortSignal,
+		});
+	return get<Student[]>(response);
 }

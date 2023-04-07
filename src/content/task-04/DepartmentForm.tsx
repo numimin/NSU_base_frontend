@@ -91,7 +91,6 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 				<DateForm name={"Дата >="} onChange={date => {
 					setStart(date); 
 					onChange({start: date});
-					console.log(date);
 				}}/>
 			</li>
 			<li>

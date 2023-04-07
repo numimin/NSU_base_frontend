@@ -9,9 +9,13 @@ import TeachersPeriodPage from './content/task-06/TeachersPeriodPage';
 import StudentsWithMarksPage from './content/task-07/StudentsWithMarksPage';
 import StudentsOfCoursePage from './content/task-08/StudentsOfCoursePage';
 import TeachersExamsPage from './content/task-09/TeachersExamsPage';
+import StudentsExamsPage from './content/task-10/StudentsExamsPage';
 
 function App() {
   return <ol>
+    <li>
+      <StudentsExamsPage/>
+    </li>
     <li>
       <TeachersExamsPage/>
     </li>
