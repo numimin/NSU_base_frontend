@@ -460,3 +460,22 @@ export async function getStudentsWithGraduateWorks(query: StudentsGraduateWorksQ
 		});
 	return get<StudentGraduateWork[]>(response);
 }
+
+export interface TeachersGraduateWorksQuery {
+	departmentId: number | null;
+	facultyId: number | null;
+	category: Category;
+}
+
+export async function getTeachersByGraduateWorks(query: TeachersGraduateWorksQuery, abortSignal: AbortSignal) {
+	const category = query.category === "NONE" ? "" : `&category=${query.category}`
+	const response = fetch("/api/teachers_graduate_works/?" +
+		getQuery("departmentId", query.departmentId) +
+		getQuery("facultyId", query.facultyId) + 
+		category, 
+		{
+			method: "GET",
+			signal: abortSignal,
+		});
+	return get<Teacher[]>(response);
+}

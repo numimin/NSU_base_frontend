@@ -11,9 +11,13 @@ import StudentsOfCoursePage from './content/task-08/StudentsOfCoursePage';
 import TeachersExamsPage from './content/task-09/TeachersExamsPage';
 import StudentsExamsPage from './content/task-10/StudentsExamsPage';
 import StudentsGraduateWorksPage from './content/task-11/StudentsGraduateWorksPage';
+import TeachersGraduateWorksPage from './content/task-12/TeachersGraduateWorksPage';
 
 function App() {
   return <ol>
+    <li>
+      <TeachersGraduateWorksPage/>
+    </li>
     <li>
       <StudentsGraduateWorksPage/>
     </li>
