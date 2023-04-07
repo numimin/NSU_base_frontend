@@ -439,3 +439,24 @@ export async function getStudentsByExams(query: StudentsExamsQuery, abortSignal:
 		});
 	return get<Student[]>(response);
 }
+
+export interface StudentsGraduateWorksQuery {
+	departmentId: number | null;
+	teacherId: number | null;
+}
+
+export interface StudentGraduateWork {
+	student: Student;
+	graduateWorkTheme: string;
+}
+
+export async function getStudentsWithGraduateWorks(query: StudentsGraduateWorksQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/students_graduate_works/?" +
+		getQuery("departmentId", query.departmentId) +
+		getQuery("teacherId", query.teacherId), 
+		{
+			method: "GET",
+			signal: abortSignal,
+		});
+	return get<StudentGraduateWork[]>(response);
+}
