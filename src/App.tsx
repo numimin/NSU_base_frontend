@@ -13,6 +13,7 @@ import StudentsExamsPage from './content/task-10/StudentsExamsPage';
 import StudentsGraduateWorksPage from './content/task-11/StudentsGraduateWorksPage';
 import TeachersGraduateWorksPage from './content/task-12/TeachersGraduateWorksPage';
 import TeachersLoadPage from './content/task-13/TeachersLoadPage';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 function App() {
   const [visible, setVisible] = useState(-1);
@@ -71,47 +72,23 @@ function App() {
         </ol>
       </li>
     </ol>
-    <ol>
-      <li>
-        <TeachersLoadPage/>
-      </li>
-      <li>
-        <TeachersGraduateWorksPage/>
-      </li>
-      <li>
-        <StudentsGraduateWorksPage/>
-      </li>
-      <li>
-        <StudentsExamsPage/>
-      </li>
-      <li>
-        <TeachersExamsPage/>
-      </li>
-      <li>
-        <StudentsOfCoursePage/>
-      </li>
-      <li>
-        <StudentsWithMarksPage/>
-      </li>
-      <li>
-        <TeachersPeriodPage/>
-      </li>
-      <li>
-        <TeacherLessonsPage/>
-      </li>
-      <li>
-        <DepartmentsPage/>
-      </li>
-      <li>
-        <DissertationsPage/>
-      </li>
-      <li>
-        <TeachersPage/>
-      </li>
-      <li>
-        <StudentsPage/>
-      </li>
-    </ol>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/tasks/task-01" element={<StudentsPage/>}/>
+        <Route path="/tasks/task-02" element={<TeachersPage/>}/>
+        <Route path="/tasks/task-03" element={<DissertationsPage/>}/>
+        <Route path="/tasks/task-04" element={<DepartmentsPage/>}/>
+        <Route path="/tasks/task-05" element={<TeacherLessonsPage/>}/>
+        <Route path="/tasks/task-06" element={<TeachersPeriodPage/>}/>
+        <Route path="/tasks/task-07" element={<StudentsWithMarksPage/>}/>
+        <Route path="/tasks/task-08" element={<StudentsOfCoursePage/>}/>
+        <Route path="/tasks/task-09" element={<TeachersExamsPage/>}/>
+        <Route path="/tasks/task-10" element={<StudentsExamsPage/>}/>
+        <Route path="/tasks/task-11" element={<StudentsGraduateWorksPage/>}/>
+        <Route path="/tasks/task-12" element={<TeachersGraduateWorksPage/>}/>
+        <Route path="/tasks/task-13" element={<TeachersLoadPage/>}/>
+      </Routes>
+    </BrowserRouter>
   </div>;
 }
 
