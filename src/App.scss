@@ -2,8 +2,8 @@
 
 .App {
     font-style: normal;
-    font-family: "PTSansRegular";
-    width: 100%;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;;
+    width: 100vw;
 }
 
 .Header {
@@ -25,11 +25,9 @@
     padding: 0;
     letter-spacing: 0.07em;
     font-size: 0.9em;
-    width: 100vw;
     margin-left: -0.5em;
 
     li {
-        font-family: "PTSansRegular";
         list-style: none;
         padding: 1em;
         cursor: pointer;

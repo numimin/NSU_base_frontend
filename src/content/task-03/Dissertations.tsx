@@ -1,5 +1,5 @@
 function Dissertations(props: {dissertations: string[]}) {
-	return <>
+	return <div>
 		<h2>Диссертации:</h2>
 		<ol>
 			{
@@ -8,7 +8,7 @@ function Dissertations(props: {dissertations: string[]}) {
 				})
 			}
 		</ol>
-	</>;
+	</div>;
 }
 
 export default Dissertations;

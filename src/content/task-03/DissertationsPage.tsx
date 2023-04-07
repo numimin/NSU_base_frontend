@@ -20,7 +20,7 @@ function DissertationsPage() {
 		return () => controller?.abort();
 	}, [facultyIds, departmentIds]);
 
-	return <>
+	return <div className='Split'>
 		<DissertationsForm
 			facultyIds={facultyIds}
 			departmentIds={departmentIds}
@@ -29,7 +29,7 @@ function DissertationsPage() {
 				setDepartmentIds(d);
 			}}/>
 		<Dissertations dissertations={dissertations}/>
-	</>;
+	</div>;
 }
 
 export default DissertationsPage;

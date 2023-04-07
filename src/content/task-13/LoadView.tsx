@@ -5,7 +5,7 @@ function printType(type: LessonType) {
 }
 
 function LoadView(props: {load: Load}) {
-    return <>
+    return <div>
         <h2>Нагрузка:</h2>
         <h3>По дисциплинам:</h3>
         <ol>
@@ -32,7 +32,7 @@ function LoadView(props: {load: Load}) {
         </ol>
         <h3>Общая</h3>
         <p>{`${props.load.lessons.map(l => l.hours).reduce((sum, h) => sum + h, 0)} часов`}</p>
-    </>;
+    </div>;
 }
 
 export default LoadView;

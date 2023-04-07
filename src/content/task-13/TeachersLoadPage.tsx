@@ -25,10 +25,10 @@ function TeachersLoadPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-    return <>
+    return <div className='Split'>
         <StudentGraduateWorkForm query={query} onChange={setQuery}/>
         <LoadView load={load}/>
-    </>;
+    </div>;
 }
 
 export default TeachersLoadPage;   

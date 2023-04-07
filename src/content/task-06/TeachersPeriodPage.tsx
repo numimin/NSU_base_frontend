@@ -26,10 +26,10 @@ function TeachersPeriodPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-	return <>
+	return <div className='Split'>
 		<DepartmentForm query={query} onChange={setQuery}/>
 		<Teachers teachers={teachers}/>
-	</>;
+	</div>;
 }
 
 export default TeachersPeriodPage;

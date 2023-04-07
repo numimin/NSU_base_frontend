@@ -3,7 +3,7 @@ import {Student, Group, getGroup, Faculty, getFaculty} from '../../api/nsu_base'
 import StudentView from './StudentView';
 
 function Students(props: {students: Student[]}) {
-	return <>
+	return <div>
 		<h2>Студенты:</h2>
 		<ol>
 			{
@@ -14,7 +14,7 @@ function Students(props: {students: Student[]}) {
 				})
 			}
 		</ol>
-	</>;
+	</div>;
 }
 
 export default Students;

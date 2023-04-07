@@ -24,11 +24,13 @@ function TeacherLessonsPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-	return <>
+	return <div className='Split'>
 		<TeacherForm query={query} onChange={setQuery}/>
-		<p>{`Всего преподавателей: ${teachers.length}`}</p>
-		<Teachers teachers={teachers}/>
-	</>;
+		<div>
+			<p>{`Всего преподавателей: ${teachers.length}`}</p>
+			<Teachers teachers={teachers}/>
+		</div>
+	</div>;
 }
 
 export default TeacherLessonsPage;

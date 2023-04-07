@@ -27,10 +27,10 @@ function StudentsPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-	return <>
+	return <div className='Split'>
 		<StudentsForm query={query} onChange={q => setQuery(q)}/>
 		<Students students={students}/>
-	</>;
+	</div>;
 }
 
 export default StudentsPage;

@@ -22,10 +22,10 @@ function StudentsGraduateWorksPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-    return <>
+    return <div className='Split'>
         <StudentGraduateWorkForm query={query} onChange={setQuery}/>
         <StudentsGraduateWorks students={students}/>
-    </>;
+    </div>;
 }
 
 export default StudentsGraduateWorksPage;   

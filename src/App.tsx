@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './App.scss';
+import './scss/Split.scss';
 import StudentsPage from './content/task-01/StudentsPage';
 import TeachersPage from './content/task-02/TeachersPage';
 import DissertationsPage from './content/task-03/DissertationsPage';

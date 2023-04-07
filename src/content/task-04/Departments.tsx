@@ -1,7 +1,7 @@
 import {Department} from '../../api/nsu_base';
 
 function Departments(props: {departments: Department[]}) {
-	return <>
+	return <div>
 		<h2>Кафедры</h2>
 		<ol>
 			{
@@ -12,7 +12,7 @@ function Departments(props: {departments: Department[]}) {
 				})
 			}
 		</ol>
-	</>;
+	</div>;
 }
 
 export default Departments;

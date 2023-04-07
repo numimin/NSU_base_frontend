@@ -26,10 +26,10 @@ function DepartmentsPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-	return <>
+	return <div className='Split'>
 		<DepartmentForm query={query} onChange={setQuery}/>
 		<Departments departments={departments}/>
-	</>;
+	</div>;
 }
 
 export default DepartmentsPage;
