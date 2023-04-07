@@ -63,7 +63,7 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 		return () => controller?.abort();
 	}, []);
 
-	return <form>
+	return <form className='Form'>
 		<ol>
 			<li>
 				<label htmlFor="category">Категория</label>

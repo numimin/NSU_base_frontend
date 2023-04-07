@@ -55,7 +55,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 		return () => controller?.abort();
 	}, []);
 
-	return <form>
+	return <form className='Form'>
 		<ol>
 			<li>
 				<label htmlFor="gender">Пол</label>

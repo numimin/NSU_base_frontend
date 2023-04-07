@@ -47,7 +47,7 @@ function TeacherForm(props: {query: TeachersExamsQuery, onChange: (query: Teache
 		return () => controller?.abort();
 	}, []);
 
-    return <form>
+    return <form className='Form'>
         <ol>
             <li>
 				<CheckedInput name="Семестр" value={term} onChange={newTerm => {

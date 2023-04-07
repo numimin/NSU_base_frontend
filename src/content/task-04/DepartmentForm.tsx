@@ -55,7 +55,7 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 	}, []);
 
 
-	return <form>
+	return <form className='Form'>
 		<ol>
 			<IdRadio 
 				name="Факультеты:"

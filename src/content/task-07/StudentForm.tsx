@@ -43,7 +43,7 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 		return () => controller?.abort();
 	}, []);
 
-	return <form>
+	return <form className='Form'>
 		<ol>
 			<li>
 				<CheckedInput name="Оценка" value={mark} onChange={newMark => {

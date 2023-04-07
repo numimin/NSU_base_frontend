@@ -36,7 +36,7 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 		return () => controller?.abort();
 	}, []);
 
-	return <form>
+	return <form className='Form'>
 		<ol>
 		<IdCheckbox 
 				name="Факультеты:"

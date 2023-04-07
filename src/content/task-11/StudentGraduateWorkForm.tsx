@@ -50,7 +50,7 @@ function StudentGraduateWorkForm(props: {query: StudentsGraduateWorksQuery, onCh
 		return () => controller?.abort();
 	}, []);
 
-    return <form>
+    return <form className='Form'>
         <ol>
             <IdRadio
 				name="Преподаватели:"
