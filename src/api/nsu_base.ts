@@ -263,6 +263,7 @@ export interface Lesson {
     term: number;
     course: number;
     type: LessonType;
+	hours: number;
 }
 
 export interface LessonQuery {
@@ -478,4 +479,25 @@ export async function getTeachersByGraduateWorks(query: TeachersGraduateWorksQue
 			signal: abortSignal,
 		});
 	return get<Teacher[]>(response);
+}
+
+export interface Type {
+	type: LessonType;
+	hours: number;
+}
+
+export interface Load {
+	lessons: Lesson[];
+	types: Type[];
+}
+
+export async function getTeachersLoad(query: StudentsGraduateWorksQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/teachers_load/?" +
+		getQuery("departmentId", query.departmentId) +
+		getQuery("teacherId", query.teacherId), 
+		{
+			method: "GET",
+			signal: abortSignal,
+		});
+	return get<Load>(response);
 }
