@@ -69,7 +69,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 				}}/>
 			</li>
             <IdCheckbox 
-				name="Группы:"
+				name="Оценки:"
 				items={allMarks?.map(m => {
 					return {id: m, name: m + ""};
 				})}

@@ -386,6 +386,29 @@ async function getStudentsOfCourseWithMarks(query: StudentsOfCourseWithMarksQuer
 	return get<Student[]>(response);
 }
 
+interface TeachersExamsQuery {
+	term: number | null;
+	groupIds: number[] | null;
+	lessonIds: number[] | null;
+}
+
+async function getTeachersByExams(query :TeachersExamsQuery, abortSignal: AbortSignal) {
+	const response = fetch("/api/teachers_exams/?" + 
+		getQuery("term", query.term),
+		{
+			method: "POST",
+			headers: {
+				"Content-Type": "application/json"
+			},
+			body: JSON.stringify({
+				groupIds: query.groupIds ? query.groupIds : [],
+				lessonIds: query.lessonIds ? query.lessonIds : [],
+			}),
+			signal: abortSignal,
+		});
+	return get<Teacher[]>(response);
+}
+
 export type {
 	SBoolean,
 	Gender, 
@@ -405,6 +428,7 @@ export type {
 	TeacherLessonsQuery,
 	StudentsWithMarkQuery,
 	StudentsOfCourseWithMarksQuery,
+	TeachersExamsQuery,
 }
 
 export {
@@ -424,4 +448,5 @@ export {
 	getStudentsWithMarks,
 	getLessonsPost,
 	getStudentsOfCourseWithMarks,
+	getTeachersByExams,
 }
