@@ -3,6 +3,7 @@
 .Select {
     label {
         margin-left: 1.4em;
+        font-weight: bold;
 
         &::after {
             content: " ▼";

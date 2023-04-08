@@ -2,6 +2,8 @@
 
 .CheckedInput {
     label {
+        font-weight: bold;
+
         &::after {
             content: " ▼";
             font-size: 0.8em;
