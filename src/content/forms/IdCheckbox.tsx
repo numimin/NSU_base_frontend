@@ -26,7 +26,7 @@ function IdRadio(props: {name: string, items: Item[] | null | undefined, id: num
     return <li className="IdCheckbox">
         {
         props.items && <>
-            <p onClick={e => setVisible(!visible)}>{props.name}</p>
+            <p className={visible ? "clicked" : ""} onClick={e => setVisible(!visible)}>{props.name}</p>
             <ol hidden={!visible}>
                 {
                 props.items.map(item => {
@@ -55,7 +55,7 @@ function IdCheckbox(props: {name: string, items: Item[] | null | undefined, ids:
     return <li className="IdCheckbox">
     {
         props.items && <>
-            <p onClick={e => setVisible(!visible)}>{props.name}</p>
+            <p className={visible ? "clicked" : ""} onClick={e => setVisible(!visible)}>{props.name}</p>
             <ol hidden={!visible}>
                 {
                     props.items.map(item => {

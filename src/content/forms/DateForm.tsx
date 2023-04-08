@@ -15,7 +15,7 @@ function DateForm(props: {name: string, onChange: (date: DateStruct) => void}) {
     });
 
     return <div className={"DateForm"}>
-        <label onClick={e => {setVisible(!visible)}}>{props.name}</label>
+        <label className={visible ? "clicked" : ""} onClick={e => {setVisible(!visible)}}>{props.name}</label>
         <div className={(visible ? "" : "hidden ")  + (focus ? "focus" : "")}>
             <input onFocus={e => setFocus(true)}
                    onBlur={e => setFocus(false)}

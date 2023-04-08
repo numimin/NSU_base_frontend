@@ -13,7 +13,7 @@ function CheckedInput(props: {name: string, value: number | null, onChange: (val
 					props.onChange(0);
 				}
 			}}/>
-			<label onClick={e => setClicked(!clicked)} htmlFor={props.name}>{props.name}</label>
+			<label className={clicked ? "clicked" : ""} onClick={e => setClicked(!clicked)} htmlFor={props.name}>{props.name}</label>
 		</div>
 		<input hidden={!clicked} type="number" id={props.name} value={props.value ? props.value : undefined} onChange={e => {
 			if (props.value === null) return;

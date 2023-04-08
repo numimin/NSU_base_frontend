@@ -8,11 +8,16 @@
         &::after {
             content: " ▼";
             font-size: 0.8em;
+            color: black;
         }
 
         &:hover {
             cursor: pointer;
         }
+    }
+
+    label.clicked {
+        color: #00bde9;
     }
 
     div {

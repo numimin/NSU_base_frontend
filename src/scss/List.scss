@@ -1,0 +1,57 @@
+@use "./colors";
+
+.List {
+    width: 100%;
+    padding: 0;
+
+    ol {
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        list-style: none;
+    }
+
+    .header {
+        color: white;
+        padding: 1em;
+        background-color: colors.$base-color;
+        margin-right: 2em;
+
+        &::after {
+            content: " ▼";
+            float: right;
+            font-size: 0.8em;
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .header.not_expandable {
+        &::after {
+            content: "";
+        }
+
+        &:hover {
+            cursor: auto;
+        }
+    }
+
+    .hidden {
+        visibility: hidden;
+    }
+
+    .content {
+        border: 3px solid colors.$base-color;
+        width: calc(100% - 4.3em);
+        padding: 1em;
+
+        p {
+            margin: 0;
+            margin-bottom: 0.25em;
+        }
+    }
+}

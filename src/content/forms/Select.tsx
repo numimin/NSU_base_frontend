@@ -9,7 +9,7 @@ export function Select(props: {name: string, options: Option[], value: string, o
     const [visible, setVisible] = useState(false);
     
     return <li className='Select'>
-        <label onClick={e => setVisible(!visible)} htmlFor={props.name}>{props.name}</label>
+        <label className={visible ? "clicked" : ""} onClick={e => setVisible(!visible)} htmlFor={props.name}>{props.name}</label>
         <div>
             <select hidden={!visible} id={props.name} value={props.value} onChange={e => {
             props.onChange(e.target.value);

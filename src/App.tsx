@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import './App.scss';
 import './scss/Split.scss';
 import './scss/Form.scss';
+import './scss/List.scss';
 import './content/forms/Select.scss';
 import StudentsPage from './content/task-01/StudentsPage';
 import TeachersPage from './content/task-02/TeachersPage';

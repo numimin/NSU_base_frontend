@@ -7,6 +7,7 @@
         &::after {
             content: " ▼";
             font-size: 0.8em;
+            color: black;
         }
 
         &:hover {
@@ -32,4 +33,8 @@
             outline: 2px solid colors.$base-color;
         }
     }
+}
+
+.clicked {
+    color: #00bde9;
 }

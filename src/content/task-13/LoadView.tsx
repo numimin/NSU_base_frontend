@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { LessonType, Load } from "../../api/nsu_base";
 
 function printType(type: LessonType) {
@@ -5,33 +6,34 @@ function printType(type: LessonType) {
 }
 
 function LoadView(props: {load: Load}) {
-    return <div>
+    const [disciplineVisible, setDisciplineVisible] = useState(false);
+    const [lectureVisible, setLectureVisible] = useState(false);
+    const [commonVisible, setCommonVisible] = useState(false);
+
+    return <div className="List">
         <h2>Нагрузка:</h2>
-        <h3>По дисциплинам:</h3>
-        <ol>
+        <p onClick={e => setDisciplineVisible(!disciplineVisible)} className="header">По дисциплинам:</p>
+        <ol hidden={!disciplineVisible} className="content">
             {
                 props.load.lessons.map(l => {
                     return <li key={l.id}>
-                        <p>{l.name}</p>
-                        <p>{printType(l.type)}</p>
-                        <p>{`${l.hours} часов`}</p>
+                        <p>{`${l.name}, ${printType(l.type)}, ${l.hours} часов`}</p>
                     </li>;
                 })
             }
         </ol>
-        <h3>По видам занятий:</h3>
-        <ol>
+        <p onClick={e => setLectureVisible(!lectureVisible)} className="header">По видам занятий:</p>
+        <ol hidden={!lectureVisible} className="content">
             {
                 props.load.types.map(t => {
                     return <li key={t.type}>
-                        <p>{printType(t.type)}</p>
-                        <p>{`${t.hours} часов`}</p>
+                        <p>{`${printType(t.type)}, ${t.hours} часов`}</p>
                     </li>;
                 })
             }
         </ol>
-        <h3>Общая</h3>
-        <p>{`${props.load.lessons.map(l => l.hours).reduce((sum, h) => sum + h, 0)} часов`}</p>
+        <p  onClick={e => setCommonVisible(!commonVisible)} className="header">Общая</p>
+        <p hidden={!commonVisible} className="content">{`${props.load.lessons.map(l => l.hours).reduce((sum, h) => sum + h, 0)} часов`}</p>
     </div>;
 }
 

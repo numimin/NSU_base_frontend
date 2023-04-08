@@ -4,6 +4,7 @@ import {Teacher, Faculty, Department, getDepartment, getFaculty} from '../../api
 function TeacherView(props: {teacher: Teacher}) {
 	const [faculty, setFaculty] = useState<Faculty | null>(null);
 	const [department, setDepartment] = useState<Department | null>(null);
+	const [visible, setVisible] = useState(false);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
@@ -26,26 +27,28 @@ function TeacherView(props: {teacher: Teacher}) {
 
 	const teacher = props.teacher;
 	return <li>
-		<p>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
-		{
-			faculty && <p>{faculty.name}</p>
-		}
-		{
-			department && <p>{`Кафедра ${department.name}`}</p>
-		}
-		<p>{`Категория: ${teacher.category === "ASSISTANT" ? "Ассистент" : teacher.category === "PROFESSOR" ? "Профессор" : "Доцент"}`}</p>
-		<p>{`Пол: ${teacher.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
-		<p>{`${teacher.hasChildren ? "Дети есть" : "Детей нет"}`}</p>
-		<p>{`${teacher.graduateStudent ? "Обучается в аспирантуре" : ""}`}</p>
-		<p>{teacher.phdThesisDate ? `Дата защиты: ${teacher.phdThesisDate}` : "Не защищался"}</p>
-		<p>{`Зарплата: ${teacher.salary} рублей`}</p>
+		<p onClick={e => setVisible(!visible)} className='header'>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
+		<div className={'content '  + (visible ? "" : "hidden")}>
+			{
+				faculty && <p>{faculty.name}</p>
+			}
+			{
+				department && <p>{`Кафедра ${department.name}`}</p>
+			}
+			<p>{`Категория: ${teacher.category === "ASSISTANT" ? "Ассистент" : teacher.category === "PROFESSOR" ? "Профессор" : "Доцент"}`}</p>
+			<p>{`Пол: ${teacher.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
+			<p>{`${teacher.hasChildren ? "Дети есть" : "Детей нет"}`}</p>
+			<p>{`${teacher.graduateStudent ? "Обучается в аспирантуре" : ""}`}</p>
+			<p>{teacher.phdThesisDate ? `Дата защиты: ${teacher.phdThesisDate}` : "Не защищался"}</p>
+			<p>{`Зарплата: ${teacher.salary} рублей`}</p>
+		</div>
 	</li>;
 }
 
 function Teachers(props: {teachers: Teacher[]}) {
 	return <div>
 		<h2>Преподаватели:</h2>
-		<ol>
+		<ol className='List'>
 			{
 				props.teachers.map(teacher => <TeacherView key={teacher.id} teacher={teacher}/>)
 			}
