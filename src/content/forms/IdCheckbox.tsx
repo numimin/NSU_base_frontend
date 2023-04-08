@@ -1,3 +1,6 @@
+import "./IdCheckbox.scss";
+import { useState } from "react";
+
 interface Item {
     name: string;
     id: number
@@ -18,11 +21,13 @@ export function convertToItemWithFunction(a: any, name?: (t: any) => string): It
 }
 
 function IdRadio(props: {name: string, items: Item[] | null | undefined, id: number | null | undefined, setId: (id: number) => void}) {
-    return <li>
+    const [visible, setVisible] = useState(false);
+    
+    return <li className="IdCheckbox">
         {
         props.items && <>
-            <h2>{props.name}</h2>
-            <ol>
+            <p onClick={e => setVisible(!visible)}>{props.name}</p>
+            <ol hidden={!visible}>
                 {
                 props.items.map(item => {
                     return <li key={item.id}>
@@ -45,11 +50,13 @@ function IdRadio(props: {name: string, items: Item[] | null | undefined, id: num
 }
 
 function IdCheckbox(props: {name: string, items: Item[] | null | undefined, ids: number[] | null | undefined, setIds: (ids: number[]) => void}) {
-    return <li>
+    const [visible, setVisible] = useState(false);
+    
+    return <li className="IdCheckbox">
     {
         props.items && <>
-            <h2>{props.name}</h2>
-            <ol>
+            <p onClick={e => setVisible(!visible)}>{props.name}</p>
+            <ol hidden={!visible}>
                 {
                     props.items.map(item => {
                         return <li key={item.id}>

@@ -1,0 +1,30 @@
+@use '../../scss/colors';
+
+.Select {
+    label {
+        margin-left: 1.4em;
+
+        &::after {
+            content: " ▼";
+            font-size: 0.8em;
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    div {
+        margin-bottom: 0.25em;
+        margin-top: 0.25em;
+    }
+
+    select {
+        margin-top: 0.25em;
+        margin-left: 1.5em;
+        width: 8em;
+        background-color: colors.$background-color;
+        border: 1px solid colors.$background-color;
+        padding: 0.25em;
+    }
+}

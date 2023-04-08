@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import {StudentQuery, Gender, SBoolean, Group, getGroups, Faculty, getFaculties} from '../../api/nsu_base';
 import CheckedInput from '../forms/CheckedInput';
 import { IdCheckbox, convertToItem } from '../forms/IdCheckbox';
+import { Select } from '../forms/Select';
 
 function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuery) => void}) {
 	const [gender, setGender] = useState<Gender>(props.query.gender);
@@ -57,17 +58,15 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 
 	return <form className='Form'>
 		<ol>
-			<li>
-				<label htmlFor="gender">Пол</label>
-				<select id="gender" value={gender} onChange={e => {
-					setGender(e.target.value as Gender);
-					onChange({gender: e.target.value as Gender});
-				}}>
-					<option value="NONE">Не указан</option>
-					<option value="MALE">Мужской</option>
-					<option value="FEMALE">Женский</option>
-				</select>
-			</li>
+			<Select name="Пол"
+					options={[{name: "Не указан", value: "NONE"},
+							  {name: "Мужской", value: "MALE"},
+							  {name: "Женский", value: "FEMALE"}]} 
+					value={gender}
+					onChange={value => {
+						setGender(value as Gender);
+						onChange({gender: value as Gender});
+					}}/>
 			<li>
 				<CheckedInput name="Год рождения" value={year} onChange={newYear => {
 					setYear(newYear);
@@ -80,17 +79,15 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					onChange({age: newAge});
 				}}/>
 			</li>
-			<li>
-				<label htmlFor="children">Дети</label>
-				<select id="children" value={hasChildren} onChange={e => {
-					setHasChildren(e.target.value as SBoolean);
-					onChange({hasChildren: e.target.value as SBoolean});
-				}}>
-					<option value="NONE">Не указано</option>
-					<option value="TRUE">Есть</option>
-					<option value="FALSE">Нет</option>
-				</select>
-			</li>
+			<Select name="Дети"
+					options={[{name: "Не указано", value: "NONE"},
+							  {name: "Есть", value: "TRUE"},
+							  {name: "Нет", value: "FALSE"}]} 
+					value={gender}
+					onChange={value => {
+						setHasChildren(value as SBoolean);
+						onChange({hasChildren: value as SBoolean});
+					}}/>
 			<li>
 				<CheckedInput name="Стипендия >= " value={minScholarship} onChange={newMinScholarship => {
 					setMinScholarship(newMinScholarship);

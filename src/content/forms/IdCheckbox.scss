@@ -1,0 +1,24 @@
+@use '../../scss/colors';
+
+.IdCheckbox {
+    p {
+        margin: 0;
+        margin-top: 0.25em;
+        margin-bottom: 0.25em;
+        margin-left: 1.4em;
+
+        &::after {
+            content: " ▼";
+            font-size: 0.8em;
+        }
+
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    input {
+        margin-left: 2.5em;
+        accent-color: colors.$base-color;
+    }
+}
