@@ -21,13 +21,20 @@
         font-weight: bold;
 
         &::after {
-            content: " ▼";
+            content: " ▶";
             float: right;
             font-size: 0.8em;
         }
 
         &:hover {
             cursor: pointer;
+        }
+    }
+
+    .header.visible {
+        &::after {
+            content: " ▼";
+            margin-top: 0.25em;
         }
     }
 

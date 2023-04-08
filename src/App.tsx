@@ -17,7 +17,7 @@ import StudentsExamsPage from './content/task-10/StudentsExamsPage';
 import StudentsGraduateWorksPage from './content/task-11/StudentsGraduateWorksPage';
 import TeachersGraduateWorksPage from './content/task-12/TeachersGraduateWorksPage';
 import TeachersLoadPage from './content/task-13/TeachersLoadPage';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
 
 function App() {
   const [visible, setVisible] = useState(-1);
@@ -78,6 +78,7 @@ function App() {
     </ol>
     <BrowserRouter>
       <Routes>
+        <Route index element={<Navigate to='/tasks/task-01'/>}/>
         <Route path="/tasks/task-01" element={<StudentsPage/>}/>
         <Route path="/tasks/task-02" element={<TeachersPage/>}/>
         <Route path="/tasks/task-03" element={<DissertationsPage/>}/>

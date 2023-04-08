@@ -27,7 +27,7 @@ function StudentView(props: {student: Student, theme?: string}) {
 
 	const student = props.student;
 	return <>
-		<p onClick={e => setVisible(!visible)} className="header">{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
+		<p onClick={e => setVisible(!visible)} className={"header " + (visible ? "visible" : "")}>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
 		<div className={"content " + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>

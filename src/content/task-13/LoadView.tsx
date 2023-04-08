@@ -12,7 +12,7 @@ function LoadView(props: {load: Load}) {
 
     return <div className="List">
         <h2>Нагрузка:</h2>
-        <p onClick={e => setDisciplineVisible(!disciplineVisible)} className="header">По дисциплинам:</p>
+        <p onClick={e => setDisciplineVisible(!disciplineVisible)} className={"header " + (disciplineVisible ? "visible" : "")}>По дисциплинам:</p>
         <ol hidden={!disciplineVisible} className="content">
             {
                 props.load.lessons.map(l => {
@@ -22,7 +22,7 @@ function LoadView(props: {load: Load}) {
                 })
             }
         </ol>
-        <p onClick={e => setLectureVisible(!lectureVisible)} className="header">По видам занятий:</p>
+        <p onClick={e => setLectureVisible(!lectureVisible)} className={"header " + (lectureVisible ? "visible" : "")}>По видам занятий:</p>
         <ol hidden={!lectureVisible} className="content">
             {
                 props.load.types.map(t => {
@@ -32,7 +32,7 @@ function LoadView(props: {load: Load}) {
                 })
             }
         </ol>
-        <p  onClick={e => setCommonVisible(!commonVisible)} className="header">Общая</p>
+        <p  onClick={e => setCommonVisible(!commonVisible)} className={"header " + (commonVisible ? "visible" : "")}>Общая</p>
         <p hidden={!commonVisible} className="content">{`${props.load.lessons.map(l => l.hours).reduce((sum, h) => sum + h, 0)} часов`}</p>
     </div>;
 }

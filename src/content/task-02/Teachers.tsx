@@ -27,7 +27,7 @@ function TeacherView(props: {teacher: Teacher}) {
 
 	const teacher = props.teacher;
 	return <li>
-		<p onClick={e => setVisible(!visible)} className='header'>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
+		<p onClick={e => setVisible(!visible)} className={"header " + (visible ? "visible" : "")}>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
 		<div className={'content '  + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>
