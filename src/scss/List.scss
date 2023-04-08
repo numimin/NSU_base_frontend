@@ -18,6 +18,7 @@
         padding: 1em;
         background-color: colors.$base-color;
         margin-right: 2em;
+        font-weight: bold;
 
         &::after {
             content: " ▼";

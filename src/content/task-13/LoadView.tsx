@@ -17,7 +17,7 @@ function LoadView(props: {load: Load}) {
             {
                 props.load.lessons.map(l => {
                     return <li key={l.id}>
-                        <p>{`${l.name}, ${printType(l.type)}, ${l.hours} часов`}</p>
+                        <p><strong>{`${l.name}, `}</strong>{`${printType(l.type)}, ${l.hours} часов`}</p>
                     </li>;
                 })
             }
@@ -27,7 +27,7 @@ function LoadView(props: {load: Load}) {
             {
                 props.load.types.map(t => {
                     return <li key={t.type}>
-                        <p>{`${printType(t.type)}, ${t.hours} часов`}</p>
+                        <p><strong>{`${printType(t.type)}`}</strong>{`, ${t.hours} часов`}</p>
                     </li>;
                 })
             }

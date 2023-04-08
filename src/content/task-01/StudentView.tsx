@@ -30,18 +30,18 @@ function StudentView(props: {student: Student, theme?: string}) {
 		<p onClick={e => setVisible(!visible)} className="header">{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
 		<div className={"content " + (visible ? "" : "hidden")}>
 			{
-				faculty && <p>{faculty.name}</p>
+				faculty && <p><strong>{faculty.name}</strong></p>
 			}
 			{
-				group && <p>{`Группа ${group.name}`}</p>
+				group && <p><strong>{`Группа `}</strong>{`${group.name}`}</p>
 			}
-			<p>{`Пол: ${student.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
-			<p>{`Дата рождения: ${student.dateOfBirth}`}</p>
-			<p>{`${student.hasChildren ? "Дети есть" : "Детей нет"}`}</p>
-			<p>{`Стипендия: ${student.scholarship} рублей`}</p>
+			<p><strong>{`Пол: `}</strong>{`${student.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
+			<p><strong>{`Дата рождения:`}</strong>{` ${student.dateOfBirth}`}</p>
+			<p><strong>{student.hasChildren ? "Дети " : "Детей "}</strong>{`${student.hasChildren ? "есть" : "нет"}`}</p>
+			<p><strong>{`Стипендия:`}</strong>{` ${student.scholarship} рублей`}</p>
 			{
 				props.theme && 
-				<p>{`Тема дипломной работы: ${props.theme}`}</p>
+				<p><strong>{`Тема дипломной работы:`}</strong>{` ${props.theme}`}</p>
 			}
 		</div>
 	</>;

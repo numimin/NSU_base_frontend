@@ -30,17 +30,17 @@ function TeacherView(props: {teacher: Teacher}) {
 		<p onClick={e => setVisible(!visible)} className='header'>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
 		<div className={'content '  + (visible ? "" : "hidden")}>
 			{
-				faculty && <p>{faculty.name}</p>
+				faculty && <p><strong>{faculty.name}</strong></p>
 			}
 			{
-				department && <p>{`Кафедра ${department.name}`}</p>
+				department && <p><strong>{`Кафедра`}</strong>{` ${department.name}`}</p>
 			}
-			<p>{`Категория: ${teacher.category === "ASSISTANT" ? "Ассистент" : teacher.category === "PROFESSOR" ? "Профессор" : "Доцент"}`}</p>
-			<p>{`Пол: ${teacher.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
-			<p>{`${teacher.hasChildren ? "Дети есть" : "Детей нет"}`}</p>
-			<p>{`${teacher.graduateStudent ? "Обучается в аспирантуре" : ""}`}</p>
-			<p>{teacher.phdThesisDate ? `Дата защиты: ${teacher.phdThesisDate}` : "Не защищался"}</p>
-			<p>{`Зарплата: ${teacher.salary} рублей`}</p>
+			<p><strong>{`Категория:`}</strong>{` ${teacher.category === "ASSISTANT" ? "Ассистент" : teacher.category === "PROFESSOR" ? "Профессор" : "Доцент"}`}</p>
+			<p><strong>{`Пол:`}</strong>{` ${teacher.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
+			<p><strong>{teacher.hasChildren ? "Дети " : "Детей "}</strong>{`${teacher.hasChildren ? "есть" : "нет"}`}</p>
+			<p><strong>{`${teacher.graduateStudent ? "Обучается в аспирантуре" : ""}`}</strong></p>
+			<p><strong>{teacher.phdThesisDate ? "Дата защиты: " : "Не защищался"}</strong>{teacher.phdThesisDate ? `${teacher.phdThesisDate}` : ""}</p>
+			<p><strong>{`Зарплата:`}</strong>{` ${teacher.salary} рублей`}</p>
 		</div>
 	</li>;
 }
