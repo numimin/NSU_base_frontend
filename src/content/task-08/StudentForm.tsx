@@ -69,7 +69,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 				}}/>
 			</li>
             <IdCheckbox 
-				name="Оценки:"
+				name="Оценки"
 				items={allMarks?.map(m => {
 					return {id: m, name: m + ""};
 				})}
@@ -80,7 +80,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 				}}
 				/>
             <IdRadio 
-				name="Факультеты:"
+				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				id={facultyId}
 				setId={newId => {
@@ -89,7 +89,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 				}}
 				/>
 			<IdCheckbox 
-				name="Группы:"
+				name="Группы"
 				items={groups?.map(convertToItem)}
 				ids={groupIds}
 				setIds={newIds => {

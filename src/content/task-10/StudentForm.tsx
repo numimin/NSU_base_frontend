@@ -18,6 +18,8 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
     const [groups, setGroups] = useState<Group[] | null>(null);
     const [lessons, setLessons] = useState<Lesson[] | null>(null);
     const allTerms = [1, 2, 3, 4, 5, 6, 7, 8];
+
+	const [lessonsVisible, setLessonsVisible] = useState(false);
     
     const onChange = (params: {
         teacherId?: number | null,
@@ -93,7 +95,7 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 				}}/>
 			</li>
             <IdRadio
-				name="Преподаватели:"
+				name="Преподаватели"
 				items={teachers?.map(t => convertToItemWithFunction(t, tt => `${tt.firstname} ${tt.lastname} ${tt.patronymic}`))}
 				id={teacherId}
 				setId={newId => {
@@ -102,7 +104,7 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 				}}
 				/>
             <IdCheckbox
-				name="Группы:"
+				name="Группы"
 				items={groups?.map(convertToItem)}
 				ids={groupIds}
 				setIds={newIds => {
@@ -110,11 +112,11 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 					onChange({groupIds: newIds});
 				}}
 				/>
-            <li>
+            <li className='IdCheckbox'>
 				{
 				lessons && <>
-					<h2>Занятия:</h2>
-					<ol>
+					<p onClick={e => setLessonsVisible(!lessonsVisible)}>Занятия</p>
+					<ol hidden={!lessonsVisible}>
 						{
 							lessons.map(lesson => {
 								return <LessonCheckbox key={lesson.id} lesson={lesson} lessonIds={lessonIds} onChange={newIds => {
@@ -128,7 +130,7 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 				}
 			</li>
             <IdCheckbox 
-				name="Семестры:"
+				name="Семестры"
 				items={allTerms?.map(m => {
 					return {id: m, name: m + ""};
 				})}

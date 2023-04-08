@@ -3,6 +3,7 @@ import {TeachersQuery, Category, Gender, SBoolean, DateStruct, Faculty, Departme
 import CheckedInput from '../forms/CheckedInput';
 import DateForm from '../forms/DateForm';
 import { IdCheckbox, convertToItem } from '../forms/IdCheckbox';
+import { Select } from '../forms/Select';
 
 function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQuery) => void}) {
 	const [category, setCategory] = useState<Category>(props.query.category);
@@ -65,40 +66,34 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 
 	return <form className='Form'>
 		<ol>
-			<li>
-				<label htmlFor="category">Категория</label>
-				<select id="category" value={category} onChange={e => {
-					setCategory(e.target.value as Category);
-					onChange({category: e.target.value as Category});
-				}}>
-					<option value="NONE">Не указана</option>
-					<option value="ASSISTANT">Ассистент</option>
-					<option value="ASSISTANT_PROFESSOR">Доцент</option>
-					<option value="PROFESSOR">Профессор</option>
-				</select>
-			</li>
-			<li>
-				<label htmlFor="gender">Пол</label>
-				<select id="gender" value={gender} onChange={e => {
-					setGender(e.target.value as Gender);
-					onChange({gender: e.target.value as Gender});
-				}}>
-					<option value="NONE">Не указан</option>
-					<option value="MALE">Мужской</option>
-					<option value="FEMALE">Женский</option>
-				</select>
-			</li>
-			<li>
-				<label htmlFor="children">Дети</label>
-				<select id="children" value={hasChildren} onChange={e => {
-					setHasChildren(e.target.value as SBoolean);
-					onChange({hasChildren: e.target.value as SBoolean});
-				}}>
-					<option value="NONE">Не указано</option>
-					<option value="TRUE">Есть</option>
-					<option value="FALSE">Нет</option>
-				</select>
-			</li>
+			<Select name="Категория"
+					options={[{name: "Не указана", value: "NONE"},
+				{name: "Ассистент", value: "ASSISTANT"},
+				{name: "Доцент", value: "ASSISTANT_PROFESSOR"},
+				{name: "Профессор", value: "PROFESSOR"}]}
+					value={category}
+					onChange={value => {
+						setCategory(value as Category);
+						onChange({category: value as Category});
+					}}/>
+			<Select name="Пол"
+					options={[{name: "Не указан", value: "NONE"},
+				{name: "Мужской", value: "MALE"},
+				{name: "Женский", value: "FEMALE"}]}
+					value={gender}
+					onChange={value => {
+						setGender(value as Gender);
+						onChange({gender: value as Gender});
+					}}/>
+			<Select name="Дети"
+					options={[{name: "Не указано", value: "NONE"},
+				{name: "Есть", value: "TRUE"},
+				{name: "Нет", value: "FALSE"}]}
+					value={hasChildren}
+					onChange={value => {
+						setHasChildren(value as SBoolean);
+						onChange({hasChildren: value as SBoolean});
+					}}/>
 			<li>
 				<CheckedInput name="Зарплата >= " value={minSalary} onChange={newMinSalary => {
 					setMinSalary(newMinSalary);
@@ -111,17 +106,15 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 					onChange({maxSalary: newMaxSalary});
 				}}/>
 			</li>
-			<li>
-				<label htmlFor="graduateStudent">Обучается в аспирантуре</label>
-				<select id="graduateStudent" value={graduateStudent} onChange={e => {
-					setGraduateStudent(e.target.value as SBoolean);
-					onChange({graduateStudent: e.target.value as SBoolean});
-				}}>
-					<option value="NONE">Не указано</option>
-					<option value="TRUE">Да</option>
-					<option value="FALSE">Нет</option>
-				</select>
-			</li>
+			<Select name="Обучается в аспирантуре"
+					options={[{name: "Не указано", value: "NONE"},
+				{name: "Да", value: "TRUE"},
+				{name: "Нет", value: "FALSE"}]}
+					value={graduateStudent}
+					onChange={value => {
+						setGraduateStudent(value as SBoolean);
+						onChange({graduateStudent: value as SBoolean});
+					}}/>
 			<li>
 				<DateForm name={"Дата защиты >="} onChange={date => {
 					setPhdThesisStartDate(date);
@@ -135,7 +128,7 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 				}}/>
 			</li>
 			<IdCheckbox
-				name="Факультеты:"
+				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				ids={facultyIds}
 				setIds={newIds => {
@@ -144,7 +137,7 @@ function TeacherForm(props: {query: TeachersQuery, onChange: (query: TeachersQue
 				}}
 				/>
 			<IdCheckbox 
-				name="Кафедры:"
+				name="Кафедры"
 				items={departments?.map(convertToItem)}
 				ids={departmentIds}
 				setIds={newIds => {

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { TeachersGraduateWorksQuery, Category, Department, Faculty, getDepartments, getFaculties } from "../../api/nsu_base";
 import { IdRadio, convertToItem } from "../forms/IdCheckbox";
+import { Select } from "../forms/Select";
 
 function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query: TeachersGraduateWorksQuery) => void}) {
     const [departmentId, setDepartmentId] = useState<number | null>(props.query.departmentId);
@@ -44,20 +45,18 @@ function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query
 
     return <form className='Form'>
         <ol>
-            <li>
-				<label htmlFor="category">Категория</label>
-				<select id="category" value={category} onChange={e => {
-					setCategory(e.target.value as Category);
-					onChange({category: e.target.value as Category});
-				}}>
-					<option value="NONE">Не указана</option>
-					<option value="ASSISTANT">Ассистент</option>
-					<option value="ASSISTANT_PROFESSOR">Доцент</option>
-					<option value="PROFESSOR">Профессор</option>
-				</select>
-			</li>
+			<Select name="Категория"
+					options={[{name: "Не указана", value: "NONE"},
+				{name: "Ассистент", value: "ASSISTANT"},
+				{name: "Доцент", value: "ASSISTANT_PROFESSOR"},
+				{name: "Профессор", value: "PROFESSOR"}]}
+					value={category}
+					onChange={value => {
+						setCategory(value as Category);
+						onChange({category: value as Category});
+					}}/>
             <IdRadio
-				name="Кафедры:"
+				name="Кафедры"
 				items={departments?.map(convertToItem)}
 				id={departmentId}
 				setId={newId => {
@@ -66,7 +65,7 @@ function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query
 				}}
 				/>
             <IdRadio 
-				name="Факультеты:"
+				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				id={facultyId}
 				setId={newId => {

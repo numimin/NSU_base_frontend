@@ -39,7 +39,7 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 	return <form className='Form'>
 		<ol>
 		<IdCheckbox 
-				name="Факультеты:"
+				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				ids={facultyIds}
 				setIds={newIds => {
@@ -48,7 +48,7 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 				}}
 				/>
 			<IdCheckbox 
-				name="Кафедры:"
+				name="Кафедры"
 				items={departments?.map(convertToItem)}
 				ids={departmentIds}
 				setIds={newIds => {

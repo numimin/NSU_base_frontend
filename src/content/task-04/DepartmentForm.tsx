@@ -58,7 +58,7 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 	return <form className='Form'>
 		<ol>
 			<IdRadio 
-				name="Факультеты:"
+				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				id={facultyId}
 				setId={newId => {
@@ -67,7 +67,7 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 				}}
 				/>
 			<IdRadio 
-				name="Группы:"
+				name="Группы"
 				items={groups?.map(convertToItem)}
 				id={groupId}
 				setId={newId => {

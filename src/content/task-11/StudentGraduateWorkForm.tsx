@@ -53,7 +53,7 @@ function StudentGraduateWorkForm(props: {query: StudentsGraduateWorksQuery, onCh
     return <form className='Form'>
         <ol>
             <IdRadio
-				name="Преподаватели:"
+				name="Преподаватели"
 				items={teachers?.map(t => convertToItemWithFunction(t, tt => `${tt.firstname} ${tt.lastname} ${tt.patronymic}`))}
 				id={teacherId}
 				setId={newId => {
@@ -62,7 +62,7 @@ function StudentGraduateWorkForm(props: {query: StudentsGraduateWorksQuery, onCh
 				}}
 				/>
             <IdRadio
-				name="Кафедры:"
+				name="Кафедры"
 				items={departments?.map(convertToItem)}
 				id={departmentId}
 				setId={newId => {

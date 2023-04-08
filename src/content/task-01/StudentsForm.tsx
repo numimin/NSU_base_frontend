@@ -101,7 +101,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 				}}/>
 			</li>
 			<IdCheckbox 
-				name="Факультеты:"
+				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				ids={facultyIds}
 				setIds={newIds => {
@@ -110,7 +110,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 				}}
 				/>
 			<IdCheckbox 
-				name="Группы:"
+				name="Группы"
 				items={groups?.map(convertToItem)}
 				ids={groupIds}
 				setIds={newIds => {

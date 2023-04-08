@@ -11,6 +11,8 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 	const [groups, setGroups] = useState<Group[] | null>(null);
 	const [lessons, setLessons] = useState<Lesson[] | null>(null);
 
+	const [lessonsVisible, setLessonsVisible] = useState(false);
+
 	const onChange = (params: {
 		groupIds?: number[] | null,
 		lessonId?: number | null,
@@ -51,11 +53,11 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 					onChange({mark: newMark});
 				}}/>
 			</li>
-			<li>
+			<li className='IdCheckbox'>
 				{
 				lessons && <>
-					<h2>Занятия:</h2>
-					<ol>
+					<p onClick={e => setLessonsVisible(!lessonsVisible)}>Занятия</p>
+					<ol hidden={!lessonsVisible}>
 						{
 							lessons.map(lesson => {
 								return <LessonView lesson={lesson} lessonId={lessonId} onChange={newId => {
@@ -69,7 +71,7 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 				}
 			</li>
 			<IdCheckbox 
-				name="Группы:"
+				name="Группы"
 				items={groups?.map(convertToItem)}
 				ids={groupIds}
 				setIds={newIds => {
