@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import {TeacherLessonsQuery, getTeacherLessons, Teacher} from '../../api/nsu_base';
 import Teachers from '../task-02/Teachers';
 import TeacherForm from './TeacherForm';
+import Header from '../Header';
 
 function TeacherLessonsPage() {
 	const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -24,13 +25,16 @@ function TeacherLessonsPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-	return <div className='Split'>
-		<TeacherForm query={query} onChange={setQuery}/>
-		<div>
-			<p>{`Всего преподавателей: ${teachers.length}`}</p>
-			<Teachers teachers={teachers}/>
+	return <>
+		<Header/>
+		<div className='Split'>
+			<TeacherForm query={query} onChange={setQuery}/>
+			<div>
+				<p>{`Всего преподавателей: ${teachers.length}`}</p>
+				<Teachers teachers={teachers}/>
+			</div>
 		</div>
-	</div>;
+	</>;
 }
 
 export default TeacherLessonsPage;

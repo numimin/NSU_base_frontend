@@ -2,6 +2,7 @@ import {useState, useEffect} from 'react';
 import {Department, DepartmentLessonQuery, getDepartmentsFromLessons} from '../../api/nsu_base';
 import Departments from './Departments';
 import DepartmentForm from './DepartmentForm';
+import Header from '../Header';
 
 function DepartmentsPage() {
 	const [departments, setDepartments] = useState<Department[]>([]);
@@ -26,10 +27,13 @@ function DepartmentsPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-	return <div className='Split'>
-		<DepartmentForm query={query} onChange={setQuery}/>
-		<Departments departments={departments}/>
-	</div>;
+	return <>
+		<Header/>
+		<div className='Split'>
+			<DepartmentForm query={query} onChange={setQuery}/>
+			<Departments departments={departments}/>
+		</div>
+	</>;
 }
 
 export default DepartmentsPage;

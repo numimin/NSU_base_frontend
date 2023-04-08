@@ -1,6 +1,6 @@
 function Dissertations(props: {dissertations: string[]}) {
 	return <div className="List">
-		<h2>Диссертации:</h2>
+		<h2>Диссертации</h2>
 		<ol>
 			{
 				props.dissertations.map(d => {

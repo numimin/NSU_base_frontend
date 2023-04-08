@@ -47,7 +47,7 @@ function TeacherView(props: {teacher: Teacher}) {
 
 function Teachers(props: {teachers: Teacher[]}) {
 	return <div>
-		<h2>Преподаватели:</h2>
+		<h2>Преподаватели</h2>
 		<ol className='List'>
 			{
 				props.teachers.map(teacher => <TeacherView key={teacher.id} teacher={teacher}/>)

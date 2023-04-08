@@ -10,7 +10,7 @@ function StudentItem(props: {key: number, student: Student}) {
 
 function Students(props: {students: Student[]}) {
 	return <div className='List'>
-		<h2>Студенты:</h2>
+		<h2>Студенты</h2>
 		<ol>
 			{
 				props.students.map(student => {

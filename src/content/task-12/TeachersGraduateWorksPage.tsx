@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Teacher, TeachersExamsQuery, TeachersGraduateWorksQuery, getTeachersByExams, getTeachersByGraduateWorks } from "../../api/nsu_base";
 import Teachers from "../task-02/Teachers";
 import TeacherForm from "./TeacherForm";
+import Header from "../Header";
 
 function TeachersGraduateWorksPage() {
     const [teachers, setTeachers] = useState<Teacher[]>([]);
@@ -23,10 +24,13 @@ function TeachersGraduateWorksPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-    return <div className='Split'>
-        <TeacherForm query={query} onChange={setQuery}/>
-        <Teachers teachers={teachers}/>
-    </div>;
+    return <>
+        <Header/>
+        <div className='Split'>
+            <TeacherForm query={query} onChange={setQuery}/>
+            <Teachers teachers={teachers}/>
+        </div>
+    </>;
 }
 
 export default TeachersGraduateWorksPage;

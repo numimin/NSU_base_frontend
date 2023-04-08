@@ -11,7 +11,7 @@ function LoadView(props: {load: Load}) {
     const [commonVisible, setCommonVisible] = useState(false);
 
     return <div className="List">
-        <h2>Нагрузка:</h2>
+        <h2>Нагрузка</h2>
         <p onClick={e => setDisciplineVisible(!disciplineVisible)} className={"header " + (disciplineVisible ? "visible" : "")}>По дисциплинам:</p>
         <ol hidden={!disciplineVisible} className="content">
             {

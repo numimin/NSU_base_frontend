@@ -13,6 +13,10 @@
     justify-content: center;
     font-size: 2em;
     color: colors.$base-color;
+
+    &:hover {
+        cursor: pointer;
+    }
 }
 
 .Nav {

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Student, StudentsExamsQuery, getStudentsByExams, getTeachersByExams } from "../../api/nsu_base";
 import Students from "../task-01/Students";
 import StudentForm from "./StudentForm";
+import Header from "../Header";
 
 function StudentsExamsPage() {
     const [students, setStudents] = useState<Student[]>([]);
@@ -27,10 +28,13 @@ function StudentsExamsPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-    return <div className='Split'>
-        <StudentForm query={query} onChange={setQuery}/>
-        <Students students={students}/>
-    </div>;
+    return <>
+        <Header/>
+        <div className='Split'>
+            <StudentForm query={query} onChange={setQuery}/>
+            <Students students={students}/>
+        </div>
+    </>;
 }
 
 export default StudentsExamsPage;   

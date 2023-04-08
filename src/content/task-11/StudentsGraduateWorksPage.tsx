@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { StudentGraduateWork, StudentsGraduateWorksQuery, getStudentsWithGraduateWorks } from "../../api/nsu_base";
 import StudentsGraduateWorks from "./StudentsGraduateWorks";
 import StudentGraduateWorkForm from "./StudentGraduateWorkForm";
+import Header from "../Header";
 
 function StudentsGraduateWorksPage() {
     const [students, setStudents] = useState<StudentGraduateWork[]>([]);
@@ -22,10 +23,13 @@ function StudentsGraduateWorksPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-    return <div className='Split'>
-        <StudentGraduateWorkForm query={query} onChange={setQuery}/>
-        <StudentsGraduateWorks students={students}/>
-    </div>;
+    return <>
+        <Header/>
+        <div className='Split'>
+            <StudentGraduateWorkForm query={query} onChange={setQuery}/>
+            <StudentsGraduateWorks students={students}/>
+        </div>
+    </>;
 }
 
 export default StudentsGraduateWorksPage;   

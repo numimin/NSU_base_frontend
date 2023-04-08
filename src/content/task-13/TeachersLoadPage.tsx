@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { StudentGraduateWork, StudentsGraduateWorksQuery, getStudentsWithGraduateWorks, Load, getTeachersLoad } from "../../api/nsu_base";
 import StudentGraduateWorkForm from "../task-11/StudentGraduateWorkForm";
 import LoadView from "./LoadView";
+import Header from "../Header";
 
 function TeachersLoadPage() {
     const [load, setLoad] = useState<Load>({
@@ -25,10 +26,13 @@ function TeachersLoadPage() {
 		return () => controller?.abort();
 	}, [query]);
 
-    return <div className='Split'>
-        <StudentGraduateWorkForm query={query} onChange={setQuery}/>
-        <LoadView load={load}/>
-    </div>;
+    return <>
+        <Header/>
+        <div className='Split'>
+            <StudentGraduateWorkForm query={query} onChange={setQuery}/>
+            <LoadView load={load}/>
+        </div>
+    </>;
 }
 
 export default TeachersLoadPage;   
