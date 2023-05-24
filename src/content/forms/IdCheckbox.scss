@@ -30,7 +30,16 @@
     }
 
     input {
-        margin-left: calc(1.4em + 1.1em);
         accent-color: colors.$base-color;
+        align-self: self-start;
+    }
+
+    li {
+        margin-left: calc(1.4em + 1.1em);
+        display: flex;
+    }
+
+    label {
+        margin-left: 0.25em;
     }
 }

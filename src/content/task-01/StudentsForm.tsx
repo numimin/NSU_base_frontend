@@ -73,13 +73,13 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 						onChange({gender: value as Gender});
 					}}/>
 			<li>
-				<CheckedInput name="Год рождения" value={year} onChange={newYear => {
+				<CheckedInput name="Год рождения" value={year} min={0} onChange={newYear => {
 					setYear(newYear);
 					onChange({year: newYear});
 				}}/>
 			</li>
 			<li>
-				<CheckedInput name="Возраст" value={age} onChange={newAge => {
+				<CheckedInput name="Возраст" value={age} min={0} onChange={newAge => {
 					setAge(newAge);
 					onChange({age: newAge});
 				}}/>
@@ -94,13 +94,13 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 						onChange({hasChildren: value as SBoolean});
 					}}/>
 			<li>
-				<CheckedInput name="Стипендия >= " value={minScholarship} onChange={newMinScholarship => {
+				<CheckedInput name="Стипендия >= " min={0} value={minScholarship} onChange={newMinScholarship => {
 					setMinScholarship(newMinScholarship);
 					onChange({minScholarship: newMinScholarship});
 				}}/>
 			</li>
 			<li>
-				<CheckedInput name="Стипендия <= " value={maxScholarship} onChange={newMaxScholarship => {
+				<CheckedInput name="Стипендия <= " min={0} value={maxScholarship} onChange={newMaxScholarship => {
 					setMaxScholarship(newMaxScholarship);
 					onChange({maxScholarship: newMaxScholarship});
 				}}/>
