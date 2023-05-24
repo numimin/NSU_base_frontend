@@ -57,7 +57,7 @@ function TeacherForm(props: {query: TeachersExamsQuery, onChange: (query: Teache
     return <form className='Form'>
         <ol>
             <li>
-				<CheckedInput name="Семестр" value={term} onChange={newTerm => {
+				<CheckedInput name="Семестр" min={1} max={8} value={term} onChange={newTerm => {
 					setTerm(newTerm);
 					onChange({term: newTerm});
 				}}/>

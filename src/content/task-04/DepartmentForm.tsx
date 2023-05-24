@@ -83,13 +83,13 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 				callback={() => setFirstVisible(true)}
 				/>
 			<li>
-				<CheckedInput name="Курс" value={course} onChange={newCourse => {
+				<CheckedInput name="Курс" value={course} min={1} max={4} onChange={newCourse => {
 					setCourse(newCourse);
 					onChange({course: newCourse});
 				}}/>
 			</li>
 			<li>
-				<CheckedInput name="Семестр" value={term} onChange={newTerm => {
+				<CheckedInput name="Семестр" value={term} min={1} max={8} onChange={newTerm => {
 					setTerm(newTerm);
 					onChange({term: newTerm});
 				}}/>

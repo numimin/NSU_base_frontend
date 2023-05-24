@@ -38,15 +38,15 @@ function StudentView(props: {student: Student, theme?: string}) {
 				faculty && <p><strong>{faculty.name}</strong></p>
 			}
 			{
-				group && <p><strong>{`Группа `}</strong>{`${group.name}`}</p>
+				group && <p><strong>{`Группа `}</strong><span>{`${group.name}`}</span></p>
 			}
-			<p><strong>{`Пол: `}</strong>{`${student.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
-			<p><strong>{`Дата рождения:`}</strong>{` ${student.dateOfBirth}`}</p>
-			<p><strong>{student.hasChildren ? "Дети " : "Детей "}</strong>{`${student.hasChildren ? "есть" : "нет"}`}</p>
-			<p><strong>{`Стипендия:`}</strong>{` ${student.scholarship} рублей`}</p>
+			<p><strong>{`Пол: `}</strong><span>{`${student.gender === "MALE" ? "Мужской" : "Женский"}`}</span></p>
+			<p><strong>{`Дата рождения:`}</strong><span>{` ${student.dateOfBirth}`}</span></p>
+			<p><strong>{student.hasChildren ? "Дети " : "Детей "}</strong><span>{`${student.hasChildren ? "есть" : "нет"}`}</span></p>
+			<p><strong>{`Стипендия:`}</strong><span>{` ${student.scholarship} рублей`}</span></p>
 			{
 				props.theme && 
-				<p><strong>{`Тема дипломной работы:`}</strong>{` ${props.theme}`}</p>
+				<p><strong>{`Тема дипломной работы:`}</strong><span>{` ${props.theme}`}</span></p>
 			}
 		</div>
 	</>;

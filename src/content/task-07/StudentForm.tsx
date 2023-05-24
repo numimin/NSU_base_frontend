@@ -53,7 +53,7 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 	return <form className='Form'>
 		<ol>
 			<li>
-				<CheckedInput name="Оценка" value={mark} onChange={newMark => {
+				<CheckedInput name="Оценка" min={2} max={5} value={mark} onChange={newMark => {
 					setMark(newMark);
 					onChange({mark: newMark});
 				}}/>

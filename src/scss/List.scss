@@ -60,6 +60,10 @@
         p {
             margin: 0;
             margin-bottom: 0.25em;
+            ::selection {
+                background-color: #00bde9;
+                color: white;
+            }
         }
     }
 }

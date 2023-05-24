@@ -62,13 +62,13 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
     return <form className='Form'>
         <ol>
             <li>
-				<CheckedInput name="Курс" value={course} onChange={newCourse => {
+				<CheckedInput name="Курс" min={1} max={4} value={course} onChange={newCourse => {
 					setCourse(newCourse);
 					onChange({course: newCourse});
 				}}/>
 			</li>
             <li>
-				<CheckedInput name="Семестр" value={term} onChange={newTerm => {
+				<CheckedInput name="Семестр" min={1} max={8} value={term} onChange={newTerm => {
 					setTerm(newTerm);
 					onChange({term: newTerm});
 				}}/>

@@ -73,7 +73,7 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 	return <form className='Form'>
 		<ol>
 			<li>
-				<CheckedInput name="Курс" value={course} onChange={newCourse => {
+				<CheckedInput name="Курс" value={course} min={1} max={4} onChange={newCourse => {
 					setCourse(newCourse);
 					onChange({course: newCourse});
 				}}/>

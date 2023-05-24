@@ -38,14 +38,14 @@ function TeacherView(props: {teacher: Teacher}) {
 				faculty && <p><strong>{faculty.name}</strong></p>
 			}
 			{
-				department && <p><strong>{`Кафедра`}</strong>{` ${department.name}`}</p>
+				department && <p><strong>{`Кафедра`}</strong><span>{` ${department.name}`}</span></p>
 			}
-			<p><strong>{`Категория:`}</strong>{` ${teacher.category === "ASSISTANT" ? "Ассистент" : teacher.category === "PROFESSOR" ? "Профессор" : "Доцент"}`}</p>
-			<p><strong>{`Пол:`}</strong>{` ${teacher.gender === "MALE" ? "Мужской" : "Женский"}`}</p>
-			<p><strong>{teacher.hasChildren ? "Дети " : "Детей "}</strong>{`${teacher.hasChildren ? "есть" : "нет"}`}</p>
+			<p><strong>{`Категория:`}</strong><span>{` ${teacher.category === "ASSISTANT" ? "Ассистент" : teacher.category === "PROFESSOR" ? "Профессор" : "Доцент"}`}</span></p>
+			<p><strong>{`Пол:`}</strong><span>{` ${teacher.gender === "MALE" ? "Мужской" : "Женский"}`}</span></p>
+			<p><strong>{teacher.hasChildren ? "Дети " : "Детей "}</strong><span>{`${teacher.hasChildren ? "есть" : "нет"}`}</span></p>
 			<p><strong>{`${teacher.graduateStudent ? "Обучается в аспирантуре" : ""}`}</strong></p>
-			<p><strong>{teacher.phdThesisDate ? "Дата защиты: " : "Не защищался"}</strong>{teacher.phdThesisDate ? `${teacher.phdThesisDate}` : ""}</p>
-			<p><strong>{`Зарплата:`}</strong>{` ${teacher.salary} рублей`}</p>
+			<p><strong>{teacher.phdThesisDate ? "Дата защиты: " : "Не защищался"}</strong><span>{teacher.phdThesisDate ? `${teacher.phdThesisDate}` : ""}<span/></span></p>
+			<p><strong>{`Зарплата:`}</strong><span>{` ${teacher.salary} рублей`}<span/></span></p>
 		</div>
 	</li>;
 }
