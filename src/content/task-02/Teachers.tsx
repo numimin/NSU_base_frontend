@@ -55,7 +55,17 @@ function Teachers(props: {teachers: Teacher[]}) {
 		<h2 className='ListHeader'>Преподаватели</h2>
 		<ol className='List'>
 			{
-				props.teachers.map(teacher => <TeacherView key={teacher.id} teacher={teacher}/>)
+				props.teachers.sort((lhs, rhs) => {
+					const lhsName = lhs.firstname + lhs.lastname + lhs.patronymic;
+					const rhsName = rhs.firstname + rhs.lastname + rhs.patronymic;
+					if (lhsName <= rhsName) {
+						return 1;
+					}
+					if (lhsName >= rhsName) {
+						return -1;
+					}
+					return 0;
+				}).map(teacher => <TeacherView key={teacher.id} teacher={teacher}/>)
 			}
 		</ol>
 	</div>;

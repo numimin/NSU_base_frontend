@@ -38,7 +38,15 @@ function IdRadio(props: {callback?: () => void, name: string, items: Item[] | nu
             }>{props.name}</p>
             <ol hidden={!visible}>
                 {
-                props.items ? props.items.map(item => {
+                props.items ? props.items.sort((lhs, rhs) => {
+					if (lhs.name <= rhs.name) {
+						return -1;
+					}
+					if (lhs.name >= rhs.name) {
+						return 1;
+					}
+					return 0;
+				}).map(item => {
                     return <li key={item.id}>
                             <input type="radio" 
                             id={`${props.name}${item.id}`} 
@@ -77,7 +85,15 @@ function IdCheckbox(props: {callback?: () => void, name: string, items: Item[] |
             }>{props.name}</p>
             <ol hidden={!visible}>
                 {
-                    props.items ? props.items.map(item => {
+                    props.items ? props.items.sort((lhs, rhs) => {
+					if (lhs.name <= rhs.name) {
+						return -1;
+					}
+					if (lhs.name >= rhs.name) {
+						return 1;
+					}
+					return 0;
+				}).map(item => {
                         return <li key={item.id}>
                             <input type="checkbox" 
                                    id={`item${item.id}`} 
