@@ -30,7 +30,6 @@ function TeacherLessonsPage() {
 		<div className='Split'>
 			<TeacherForm query={query} onChange={setQuery}/>
 			<div>
-				<p>{`Всего преподавателей: ${teachers.length}`}</p>
 				<Teachers teachers={teachers}/>
 			</div>
 		</div>

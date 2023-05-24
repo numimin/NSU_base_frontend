@@ -20,6 +20,7 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
     const allTerms = [1, 2, 3, 4, 5, 6, 7, 8];
 
 	const [lessonsVisible, setLessonsVisible] = useState(false);
+	const [firstVisible, setFirstVisible] = useState(false);
     
     const onChange = (params: {
         teacherId?: number | null,
@@ -43,48 +44,54 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setLessonIds(null);
-            if (groupIds) {
-                setLessons(await getLessonsPost(groupIds, controller.signal));
-            } else {
-                setLessons(await getLessonsPost([], controller.signal));
-            }
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setLessonIds(null);
+				if (groupIds) {
+					setLessons(await getLessonsPost(groupIds, controller.signal));
+				} else {
+					setLessons(await getLessonsPost([], controller.signal));
+				}
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [groupIds]);
+	}, [firstVisible, groupIds]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroupIds(null);
-			setGroups(await getGroups([], controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroupIds(null);
+				setGroups(await getGroups([], controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setTeacherId(null);
-			setTeachers(await getTeachers({
-                category: "NONE", 
-                gender: "NONE", 
-                hasChildren: "NONE", 
-                minSalary: null, 
-                maxSalary: null, 
-                graduateStudent: "NONE",
-                facultyIds: [],
-                departmentIds: [],
-                phdThesisStartDate: null,
-                phdThesisEndDate: null,
-            }, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setTeacherId(null);
+				setTeachers(await getTeachers({
+					category: "NONE", 
+					gender: "NONE", 
+					hasChildren: "NONE", 
+					minSalary: null, 
+					maxSalary: null, 
+					graduateStudent: "NONE",
+					facultyIds: [],
+					departmentIds: [],
+					phdThesisStartDate: null,
+					phdThesisEndDate: null,
+				}, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
     return <form className='Form'>
         <ol>
@@ -95,6 +102,7 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 				}}/>
 			</li>
             <IdRadio
+			 	callback={() => setFirstVisible(true)}
 				name="Преподаватели"
 				items={teachers?.map(t => convertToItemWithFunction(t, tt => `${tt.firstname} ${tt.lastname} ${tt.patronymic}`))}
 				id={teacherId}
@@ -103,7 +111,8 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 					onChange({teacherId: newId});
 				}}
 				/>
-            <IdCheckbox
+            <IdCheckbox   
+			 	callback={() => setFirstVisible(true)}
 				name="Группы"
 				items={groups?.map(convertToItem)}
 				ids={groupIds}
@@ -114,22 +123,24 @@ function StudentForm(props: {query: StudentsExamsQuery, onChange: (query: Studen
 				/>
             <li className='IdCheckbox'>
 				{
-				lessons && <>
-					<p onClick={e => setLessonsVisible(!lessonsVisible)}>Занятия</p>
+				<>
+					<p onClick={e => {setLessonsVisible(!lessonsVisible); setFirstVisible(true)}}>Занятия</p>
 					<ol hidden={!lessonsVisible}>
 						{
-							lessons.map(lesson => {
+							lessons ? lessons.map(lesson => {
 								return <LessonCheckbox key={lesson.id} lesson={lesson} lessonIds={lessonIds} onChange={newIds => {
 									setLessonIds(newIds);
 			   						onChange({lessonIds: newIds});
 								}}/>
 								})
+								: <p>Идет загрузка...</p>
 							}
 						</ol>
 					</>
 				}
 			</li>
             <IdCheckbox 
+			 	callback={() => setFirstVisible(true)}
 				name="Семестры"
 				items={allTerms?.map(m => {
 					return {id: m, name: m + ""};

@@ -10,6 +10,7 @@ function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query
     
     const [departments, setDepartments] = useState<Department[] | null>(null);
     const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
 
     const onChange = (params: {
         departmentId?: number | null,
@@ -25,23 +26,27 @@ function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setDepartmentId(null);
-			setDepartments(await getDepartments(facultyId ? [facultyId] : [], controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setDepartmentId(null);
+				setDepartments(await getDepartments(facultyId ? [facultyId] : [], controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [facultyId]);
+	}, [firstVisible, facultyId]);
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setFacultyId(null);
-			setFaculties(await getFaculties(controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setFacultyId(null);
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
     return <form className='Form'>
         <ol>
@@ -56,6 +61,7 @@ function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query
 						onChange({category: value as Category});
 					}}/>
             <IdRadio
+			 	callback={() => setFirstVisible(true)}
 				name="Кафедры"
 				items={departments?.map(convertToItem)}
 				id={departmentId}
@@ -65,6 +71,7 @@ function TeacherForm(props: {query: TeachersGraduateWorksQuery, onChange: (query
 				}}
 				/>
             <IdRadio 
+			 	callback={() => setFirstVisible(true)}
 				name="Факультеты"
 				items={faculties?.map(convertToItem)}
 				id={facultyId}

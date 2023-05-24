@@ -13,6 +13,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
     const [faculties, setFaculties] = useState<Faculty[] | null>(null);
     const [groups, setGroups] = useState<Faculty[] | null>(null);
     const allMarks = [2, 3, 4, 5];
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
         course?: number | null,
@@ -32,27 +33,31 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroupIds(null);
-            if (facultyId) {
-                setGroups(await getGroups([facultyId], controller.signal));
-            } else {
-                setGroups(await getGroups([], controller.signal));
-            }
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroupIds(null);
+				if (facultyId) {
+					setGroups(await getGroups([facultyId], controller.signal));
+				} else {
+					setGroups(await getGroups([], controller.signal));
+				}
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [facultyId]);
+	}, [firstVisible, facultyId]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setFacultyId(null);
-			setFaculties(await getFaculties(controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setFacultyId(null);
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
     return <form className='Form'>
         <ol>
@@ -87,6 +92,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 					setFacultyId(newId);
 					onChange({facultyId: newId});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<IdCheckbox 
 				name="Группы"
@@ -96,6 +102,7 @@ function StudentForm(props: {query: StudentsOfCourseWithMarksQuery, onChange: (q
 					setGroupIds(newIds);
 					onChange({groupIds: newIds});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
         </ol>
     </form>;

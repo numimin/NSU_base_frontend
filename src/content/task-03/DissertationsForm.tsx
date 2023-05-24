@@ -7,6 +7,7 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
 	const [departmentIds, setDepartmentIds] = useState<number[]>(props.departmentIds);
 	const [departments, setDepartments] = useState<Department[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
 		departmentIds?: number[],
@@ -19,22 +20,26 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			if (!facultyIds) return;
-			setDepartments(await getDepartments(facultyIds, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				if (!facultyIds) return;
+				setDepartments(await getDepartments(facultyIds, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [facultyIds]);
+	}, [facultyIds, firstVisible]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setFaculties(await getFaculties(controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
 	return <form className='Form'>
 		<ol>
@@ -46,6 +51,7 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 					setFacultyIds(newIds);
 					onChange({facultyIds: newIds});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<IdCheckbox 
 				name="Кафедры"
@@ -55,6 +61,7 @@ function DissertationsForm(props: {facultyIds: number[], departmentIds: number[]
 					setDepartmentIds(newIds);
 					onChange({departmentIds: newIds});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 		</ol>
 	</form>;

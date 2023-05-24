@@ -12,6 +12,7 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 	const [lessons, setLessons] = useState<Lesson[] | null>(null);
 
 	const [lessonsVisible, setLessonsVisible] = useState(false);
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
 		groupIds?: number[] | null,
@@ -27,23 +28,27 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setLessonId(null);
-			setLessons(await getLessonsPost(groupIds, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setLessonId(null);
+				setLessons(await getLessonsPost(groupIds, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [groupIds]);
+	}, [firstVisible, groupIds]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroupIds(null);
-			setGroups(await getGroups([], controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroupIds(null);
+				setGroups(await getGroups([], controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
 	return <form className='Form'>
 		<ol>
@@ -55,16 +60,17 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 			</li>
 			<li className='IdCheckbox'>
 				{
-				lessons && <>
-					<p onClick={e => setLessonsVisible(!lessonsVisible)}>Занятия</p>
+				<>
+					<p onClick={e => {setLessonsVisible(!lessonsVisible); setFirstVisible(true)}}>Занятия</p>
 					<ol hidden={!lessonsVisible}>
 						{
-							lessons.map(lesson => {
+							lessons ? lessons.map(lesson => {
 								return <LessonView lesson={lesson} lessonId={lessonId} onChange={newId => {
 									setLessonId(newId);
 			   						onChange({lessonId: newId});
 								}}/>
 								})
+								: <p>Идет загрузка...</p>
 							}
 						</ol>
 					</>
@@ -78,6 +84,7 @@ function StudentForm(props: {query: StudentsWithMarkQuery, onChange: (query: Stu
 					setGroupIds(newIds);
 					onChange({groupIds: newIds});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 		</ol>
 	</form>;

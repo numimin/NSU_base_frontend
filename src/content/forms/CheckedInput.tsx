@@ -5,20 +5,13 @@ function CheckedInput(props: {name: string, value: number | null, onChange: (val
 	const [clicked, setClicked] = useState(false);
 
 	return <div className="CheckedInput">
+		<label className={clicked ? "clicked" : ""} onClick={e => setClicked(!clicked)} htmlFor={props.name}>{props.name}</label>
 		<div>
-			<input type="checkbox" checked={props.value !== null} onChange={e => {
-				if (e.target.checked != true) {
-					props.onChange(null);
-				} else {
-					props.onChange(0);
-				}
+			<button type='button' hidden={!clicked} onClick={_ => props.onChange(null)}>x</button>
+			<input hidden={!clicked} type="number" id={props.name} value={props.value ? props.value : ""} onChange={e => {
+				props.onChange(parseInt(e.target.value));
 			}}/>
-			<label className={clicked ? "clicked" : ""} onClick={e => setClicked(!clicked)} htmlFor={props.name}>{props.name}</label>
 		</div>
-		<input hidden={!clicked} type="number" id={props.name} value={props.value ? props.value : undefined} onChange={e => {
-			if (props.value === null) return;
-			props.onChange(parseInt(e.target.value));
-		}}/>
 	</div>;
 }
 

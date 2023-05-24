@@ -11,3 +11,9 @@
         width: 100%;
     }
 }
+
+@media (orientation: portrait) and (max-width: 700px) {
+    .Split {
+        flex-direction: column;
+    }
+}

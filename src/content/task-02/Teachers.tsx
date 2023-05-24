@@ -5,29 +5,34 @@ function TeacherView(props: {teacher: Teacher}) {
 	const [faculty, setFaculty] = useState<Faculty | null>(null);
 	const [department, setDepartment] = useState<Department | null>(null);
 	const [visible, setVisible] = useState(false);
+	const [firstVisible, setfirstVisible] = useState(false);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			if (!department) return;
-			setFaculty(await getFaculty(department.facultyId, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				if (!department) return;
+				setFaculty(await getFaculty(department.facultyId, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [department])
+	}, [department, firstVisible])
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setDepartment(await getDepartment(props.teacher.departmentId, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setDepartment(await getDepartment(props.teacher.departmentId, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [props.teacher.departmentId]);
+	}, [props.teacher.departmentId, firstVisible]);
 
 	const teacher = props.teacher;
 	return <li>
-		<p onClick={e => setVisible(!visible)} className={"header " + (visible ? "visible" : "")}>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
+		<p onClick={e => {setVisible(!visible); setfirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
 		<div className={'content '  + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>

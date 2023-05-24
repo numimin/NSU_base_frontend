@@ -20,16 +20,25 @@ export function convertToItemWithFunction(a: any, name?: (t: any) => string): It
     }
 }
 
-function IdRadio(props: {name: string, items: Item[] | null | undefined, id: number | null | undefined, setId: (id: number) => void}) {
+function IdRadio(props: {callback?: () => void, name: string, items: Item[] | null | undefined, id: number | null | undefined, setId: (id: number) => void}) {
     const [visible, setVisible] = useState(false);
+    const [firstVisible, setFirstVisible] = useState(false);
     
     return <li className="IdCheckbox">
         {
-        props.items && <>
-            <p className={visible ? "clicked" : ""} onClick={e => setVisible(!visible)}>{props.name}</p>
+        <>
+            <p className={visible ? "clicked" : ""} onClick={
+                e => {
+                    setVisible(!visible);
+                    if (!firstVisible) {
+                        props.callback?.call(props.callback);
+                    }
+                    setFirstVisible(true);
+                }
+            }>{props.name}</p>
             <ol hidden={!visible}>
                 {
-                props.items.map(item => {
+                props.items ? props.items.map(item => {
                     return <li key={item.id}>
                             <input type="radio" 
                             id={`${props.name}${item.id}`} 
@@ -42,6 +51,7 @@ function IdRadio(props: {name: string, items: Item[] | null | undefined, id: num
                             <label htmlFor={`${props.name}${item.id}`}>{item.name}</label>
                         </li>
                     })
+                    : <p className="usual">Идет загрузка...</p>
                 }
             </ol>
         </>    
@@ -49,16 +59,25 @@ function IdRadio(props: {name: string, items: Item[] | null | undefined, id: num
     </li>;
 }
 
-function IdCheckbox(props: {name: string, items: Item[] | null | undefined, ids: number[] | null | undefined, setIds: (ids: number[]) => void}) {
+function IdCheckbox(props: {callback?: () => void, name: string, items: Item[] | null | undefined, ids: number[] | null | undefined, setIds: (ids: number[]) => void}) {
     const [visible, setVisible] = useState(false);
+    const [firstVisible, setFirstVisible] = useState(false);
     
     return <li className="IdCheckbox">
     {
-        props.items && <>
-            <p className={visible ? "clicked" : ""} onClick={e => setVisible(!visible)}>{props.name}</p>
+        <>
+            <p className={visible ? "clicked" : ""} onClick={
+                e => {
+                    setVisible(!visible);
+                    if (!firstVisible) {
+                        props.callback?.call(props.callback);
+                    }
+                    setFirstVisible(true);
+                }
+            }>{props.name}</p>
             <ol hidden={!visible}>
                 {
-                    props.items.map(item => {
+                    props.items ? props.items.map(item => {
                         return <li key={item.id}>
                             <input type="checkbox" 
                                    id={`item${item.id}`} 
@@ -85,6 +104,7 @@ function IdCheckbox(props: {name: string, items: Item[] | null | undefined, ids:
                             <label htmlFor={`${props.name}${item.id}`}>{item.name}</label>
                         </li>
                     })
+                    : <p className="usual">Идет загрузка...</p>
                 }
             </ol>
         </>

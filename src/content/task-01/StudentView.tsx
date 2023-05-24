@@ -5,29 +5,34 @@ function StudentView(props: {student: Student, theme?: string}) {
 	const [group, setGroup] = useState<Group | null>(null);
 	const [faculty, setFaculty] = useState<Faculty | null>(null);
 	const [visible, setVisible] = useState(false);
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			if (!group) return;
-			setFaculty(await getFaculty(group.facultyId, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				if (!group) return;
+				setFaculty(await getFaculty(group.facultyId, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [group])
+	}, [group, firstVisible])
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroup(await getGroup(student.groupId, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroup(await getGroup(student.groupId, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [props.student]);
+	}, [props.student, firstVisible]);
 
 	const student = props.student;
 	return <>
-		<p onClick={e => setVisible(!visible)} className={"header " + (visible ? "visible" : "")}>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
+		<p onClick={e => {setVisible(!visible); setFirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
 		<div className={"content " + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>

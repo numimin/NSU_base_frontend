@@ -8,6 +8,7 @@ function StudentGraduateWorkForm(props: {query: StudentsGraduateWorksQuery, onCh
 
     const [teachers, setTeachers] = useState<Teacher[] | null>(null);
     const [departments, setDepartments] = useState<Department[] | null>(null);
+    const [firstVisible, setFirstVisible] = useState(false);
 
     const onChange = (params: {
         teacherId?: number | null,
@@ -21,38 +22,43 @@ function StudentGraduateWorkForm(props: {query: StudentsGraduateWorksQuery, onCh
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setTeacherId(null);
-			setTeachers(await getTeachers({
-                category: "NONE", 
-                gender: "NONE", 
-                hasChildren: "NONE", 
-                minSalary: null, 
-                maxSalary: null, 
-                graduateStudent: "NONE",
-                facultyIds: [],
-                departmentIds: departmentId ? [departmentId] : [],
-                phdThesisStartDate: null,
-                phdThesisEndDate: null,
-            }, controller.signal));
-			controller = null;
-		}) ();
-		return () => controller?.abort();
-	}, [departmentId]);
+        if (firstVisible) {
+            (async () => {
+                setTeacherId(null);
+                setTeachers(await getTeachers({
+                    category: "NONE", 
+                    gender: "NONE", 
+                    hasChildren: "NONE", 
+                    minSalary: null, 
+                    maxSalary: null, 
+                    graduateStudent: "NONE",
+                    facultyIds: [],
+                    departmentIds: departmentId ? [departmentId] : [],
+                    phdThesisStartDate: null,
+                    phdThesisEndDate: null,
+                }, controller.signal));
+                controller = null;
+            }) ();
+        }
+        return () => controller?.abort();
+	}, [firstVisible, departmentId]);
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setDepartmentId(null);
-			setDepartments(await getDepartments([], controller.signal));
-			controller = null;
-		}) ();
+        if (firstVisible) {
+            (async () => {
+                setDepartmentId(null);
+                setDepartments(await getDepartments([], controller.signal));
+                controller = null;
+            }) ();
+        }
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
     return <form className='Form'>
         <ol>
             <IdRadio
+                callback={() => setFirstVisible(true)}
 				name="Преподаватели"
 				items={teachers?.map(t => convertToItemWithFunction(t, tt => `${tt.firstname} ${tt.lastname} ${tt.patronymic}`))}
 				id={teacherId}
@@ -62,6 +68,7 @@ function StudentGraduateWorkForm(props: {query: StudentsGraduateWorksQuery, onCh
 				}}
 				/>
             <IdRadio
+                callback={() => setFirstVisible(true)}
 				name="Кафедры"
 				items={departments?.map(convertToItem)}
 				id={departmentId}

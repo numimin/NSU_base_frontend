@@ -13,6 +13,7 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 	const [end, setEnd] = useState<DateStruct | null>(props.query.end);
 	const [groups, setGroups] = useState<Group[] | null>(null);
 	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
 		groupId?: number | null,
@@ -34,25 +35,29 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			if (facultyId) {
-				setGroups(await getGroups([facultyId], controller.signal));
-			} else {
-				setGroups(await getGroups([], controller.signal));
-			}
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				if (facultyId) {
+					setGroups(await getGroups([facultyId], controller.signal));
+				} else {
+					setGroups(await getGroups([], controller.signal));
+				}
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [facultyId]);
+	}, [facultyId, firstVisible]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setFaculties(await getFaculties(controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
 
 	return <form className='Form'>
@@ -65,6 +70,7 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 					setFacultyId(newId);
 					onChange({facultyId: newId});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<IdRadio 
 				name="Группы"
@@ -74,6 +80,7 @@ function DepartmentForm(props: {query: DepartmentLessonQuery, onChange: (query: 
 					setGroupId(newId);
 					onChange({groupId: newId});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<li>
 				<CheckedInput name="Курс" value={course} onChange={newCourse => {

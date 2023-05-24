@@ -15,6 +15,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
 	const [groupIds, setGroupIds] = useState<number[]>(props.query.groupIds);
 	const [groups, setGroups] = useState<Group[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
 		gender?: Gender,
@@ -40,21 +41,25 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroups(await getGroups(facultyIds, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroups(await getGroups(facultyIds, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [facultyIds]);
+	}, [facultyIds, firstVisible]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setFaculties(await getFaculties(controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
 	return <form className='Form'>
 		<ol>
@@ -108,6 +113,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					setFacultyIds(newIds);
 					onChange({facultyIds: newIds});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<IdCheckbox 
 				name="Группы"
@@ -117,6 +123,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					setGroupIds(newIds);
 					onChange({groupIds: newIds});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 		</ol>
 	</form>;

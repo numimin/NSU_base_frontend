@@ -19,8 +19,18 @@
         }
     }
 
+    p.usual {
+        font-weight: normal;
+        &::after {
+            content: ""
+        }
+        &:hover {
+            cursor: default;
+        }
+    }
+
     input {
-        margin-left: 2.5em;
+        margin-left: calc(1.4em + 1.1em);
         accent-color: colors.$base-color;
     }
 }

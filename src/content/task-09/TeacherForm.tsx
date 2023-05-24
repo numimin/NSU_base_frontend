@@ -12,6 +12,7 @@ function TeacherForm(props: {query: TeachersExamsQuery, onChange: (query: Teache
     const [lessons, setLessons] = useState<Lesson[] | null>(null);
 
 	const [lessonsVisible, setLessonsVisible] = useState(false);
+	const [firstVisible, setFirstVisible] = useState(false);
     
     const onChange = (params: {
         term?: number | null,
@@ -27,27 +28,31 @@ function TeacherForm(props: {query: TeachersExamsQuery, onChange: (query: Teache
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setLessonIds(null);
-            if (groupIds) {
-                setLessons(await getLessonsPost(groupIds, controller.signal));
-            } else {
-                setLessons(await getLessonsPost([], controller.signal));
-            }
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setLessonIds(null);
+				if (groupIds) {
+					setLessons(await getLessonsPost(groupIds, controller.signal));
+				} else {
+					setLessons(await getLessonsPost([], controller.signal));
+				}
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [groupIds]);
+	}, [firstVisible, groupIds]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroupIds(null);
-			setGroups(await getGroups([], controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroupIds(null);
+				setGroups(await getGroups([], controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
     return <form className='Form'>
         <ol>
@@ -58,6 +63,7 @@ function TeacherForm(props: {query: TeachersExamsQuery, onChange: (query: Teache
 				}}/>
 			</li>
             <IdCheckbox
+			 	callback={() => setFirstVisible(true)}
 				name="Группы"
 				items={groups?.map(convertToItem)}
 				ids={groupIds}
@@ -68,16 +74,17 @@ function TeacherForm(props: {query: TeachersExamsQuery, onChange: (query: Teache
 				/>
             <li className='IdCheckbox'>
 				{
-				lessons && <>
-					<p onClick={e => setLessonsVisible(!lessonsVisible)}>Занятия</p>
+				<>
+					<p onClick={e => {setLessonsVisible(!lessonsVisible); setFirstVisible(true)}}>Занятия</p>
 					<ol hidden={!lessonsVisible}>
 						{
-							lessons.map(lesson => {
+							lessons ? lessons.map(lesson => {
 								return <LessonCheckbox key={lesson.id} lesson={lesson} lessonIds={lessonIds} onChange={newIds => {
 									setLessonIds(newIds);
 			   						onChange({lessonIds: newIds});
 								}}/>
 								})
+								: <p>Идет звгрузка...</p>
 							}
 						</ol>
 					</>

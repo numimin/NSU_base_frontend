@@ -2,6 +2,7 @@
 
 .CheckedInput {
     label {
+        margin-left: 1.35em;
         font-weight: bold;
 
         &::after {
@@ -26,11 +27,23 @@
 
     input[type="number"] {
         margin-top: 0.25em;
-        margin-left: 1.5em;
+        margin-left: 0.5em;
         width: 8em;
         
         &:focus {
             outline: 2px solid colors.$base-color;
+        }
+    }
+
+    button {
+        margin-left: calc(1.35em + 1.1em);
+        background-color: white;
+        border: 2px solid #00bde9;
+
+        &:hover {
+            background-color: #00bde9;
+            color: white;
+            cursor: pointer;
         }
     }
 }

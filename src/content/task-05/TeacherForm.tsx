@@ -14,6 +14,7 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 	const [lessons, setLessons] = useState<Lesson[] | null>(null);
 
 	const [lessonsVisible, setLessonsVisible] = useState(false);
+	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
 		groupId?: number | null,
@@ -31,37 +32,43 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setLessonId(null);
-			setLessons(await getLessons({groupId: groupId, course: course}, controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setLessonId(null);
+				setLessons(await getLessons({groupId: groupId, course: course}, controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [groupId, course]);
+	}, [firstVisible, groupId, course]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setGroupId(null);
-			if (facultyId) {
-				setGroups(await getGroups([facultyId], controller.signal));
-			} else {
-				setGroups(await getGroups([], controller.signal));
-			}
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setGroupId(null);
+				if (facultyId) {
+					setGroups(await getGroups([facultyId], controller.signal));
+				} else {
+					setGroups(await getGroups([], controller.signal));
+				}
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [facultyId]);
+	}, [firstVisible, facultyId]);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			setFacultyId(null);
-			setFaculties(await getFaculties(controller.signal));
-			controller = null;
-		}) ();
+		if (firstVisible) {
+			(async () => {
+				setFacultyId(null);
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
 		return () => controller?.abort();
-	}, []);
+	}, [firstVisible]);
 
 	return <form className='Form'>
 		<ol>
@@ -79,6 +86,7 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 					setFacultyId(newId);
 					onChange({facultyId: newId});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<IdRadio 
 				name="Группы"
@@ -88,19 +96,21 @@ function TeacherForm(props: {query: TeacherLessonsQuery, onChange: (query: Teach
 					setGroupId(newId);
 					onChange({groupId: newId});
 				}}
+				callback={() => setFirstVisible(true)}
 				/>
 			<li className='IdCheckbox'>
 				{
-				lessons && <>
-					<p onClick={e => setLessonsVisible(!lessonsVisible)}>Занятия</p>
+				 <>
+					<p onClick={e => {setLessonsVisible(!lessonsVisible); setFirstVisible(true)}}>Занятия</p>
 					<ol hidden={!lessonsVisible}>
 						{
-							lessons.map(lesson => {
+							lessons ? lessons.map(lesson => {
 								return <LessonView key={lesson.id} lesson={lesson} lessonId={lessonId} onChange={newId => {
 									setLessonId(newId);
 			   						onChange({lessonId: newId});
 								}}/>
 								})
+								: <p>Идет загрузка...</p>
 							}
 						</ol>
 					</>
