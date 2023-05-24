@@ -4,6 +4,10 @@
     font-style: normal;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;;
     width: 100vw;
+    ::selection {
+        background-color: #00bde9;
+        color: white;
+    }
 }
 
 .Header {

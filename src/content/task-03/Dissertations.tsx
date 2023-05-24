@@ -1,7 +1,7 @@
 function Dissertations(props: {dissertations: string[]}) {
-	return <div className="List">
-		<h2>Диссертации</h2>
-		<ol>
+	return <div>
+		<h2 className="ListHeader">Диссертации</h2>
+		<ol className="List">
 			{
 				props.dissertations.map(d => {
 					if (d === null) return <></>;

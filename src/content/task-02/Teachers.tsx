@@ -33,7 +33,7 @@ function TeacherView(props: {teacher: Teacher}) {
 	const teacher = props.teacher;
 	return <li>
 		<p onClick={e => {setVisible(!visible); setfirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
-		<div className={'content '  + (visible ? "" : "hidden")}>
+		<div hidden={!visible} className={'content '  + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>
 			}
@@ -52,7 +52,7 @@ function TeacherView(props: {teacher: Teacher}) {
 
 function Teachers(props: {teachers: Teacher[]}) {
 	return <div>
-		<h2>Преподаватели</h2>
+		<h2 className='ListHeader'>Преподаватели</h2>
 		<ol className='List'>
 			{
 				props.teachers.map(teacher => <TeacherView key={teacher.id} teacher={teacher}/>)

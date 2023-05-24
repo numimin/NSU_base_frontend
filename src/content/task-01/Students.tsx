@@ -9,9 +9,9 @@ function StudentItem(props: {key: number, student: Student}) {
 }
 
 function Students(props: {students: Student[]}) {
-	return <div className='List'>
-		<h2>Студенты</h2>
-		<ol>
+	return <div>
+		<h2 className='ListHeader'>Студенты</h2>
+		<ol className='List'>
 			{
 				props.students.map(student => {
 					return <StudentItem key={student.id} student={student}/>

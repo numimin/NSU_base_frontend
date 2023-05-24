@@ -1,9 +1,9 @@
 import {Department} from '../../api/nsu_base';
 
 function Departments(props: {departments: Department[]}) {
-	return <div className='List'>
-		<h2>Кафедры</h2>
-		<ol>
+	return <div>
+		<h2 className='ListHeader'>Кафедры</h2>
+		<ol className='List'>
 			{
 				props.departments.map(department => {
 					return <li key={department.id}>

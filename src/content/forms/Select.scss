@@ -1,6 +1,8 @@
 @use '../../scss/colors';
 
 .Select {
+    display: flex;
+    flex-direction: column;
     label {
         margin-left: 1.4em;
         font-weight: bold;
@@ -23,9 +25,8 @@
 
     select {
         margin-top: 0.25em;
-        margin-left: 1.5em;
+        margin-left: 1.75em;
         width: 8em;
-        background-color: colors.$background-color;
         border: 1px solid colors.$background-color;
         padding: 0.25em;
     }

@@ -1,6 +1,8 @@
 @use '../../scss/colors';
 
 .CheckedInput {
+    display: flex;
+    flex-direction: column;
     label {
         margin-left: 1.35em;
         font-weight: bold;
