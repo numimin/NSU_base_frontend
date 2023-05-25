@@ -5,7 +5,7 @@ function Dissertations(props: {dissertations: string[]}) {
 			{
 				props.dissertations.map(d => {
 					if (d === null) return <></>;
-					return <p className="header not_expandable" key={d}>{d}</p>;
+					return <li className="header not_expandable" key={d}>{d}</li>;
 				})
 			}
 		</ol>

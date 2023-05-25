@@ -51,3 +51,12 @@
 .clicked {
     color: #00bde9;
 }
+
+.CheckedInput.EditInput {
+    label, button {
+        margin-left: 0;
+    }
+    input {
+        margin-left: 0.5em;
+    }
+}

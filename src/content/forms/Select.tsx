@@ -5,10 +5,10 @@ export interface Option {
     value: string;
 }
 
-export function Select(props: {name: string, options: Option[], value: string, onChange: (value: string) => void}) {
+export function Select(props: {className?: string, name: string, options: Option[], value: string, onChange: (value: string) => void}) {
     const [visible, setVisible] = useState(false);
     
-    return <li className='Select'>
+    return <li className={'Select ' + (props.className || "")}>
         <label className={visible ? "clicked" : ""} onClick={e => setVisible(!visible)} htmlFor={props.name}>{props.name}</label>
         <div>
             <select hidden={!visible} id={props.name} value={props.value} onChange={e => {

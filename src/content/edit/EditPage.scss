@@ -1,0 +1,41 @@
+@use '../../scss/colors';
+
+.TextInput {
+    display: flex;
+    justify-content: space-between;
+    input {
+        margin-right: 1em;
+        &:focus {
+            outline: 2px solid colors.$base-color;
+        }
+    }
+}
+
+.FormContent {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1em;
+
+    .AddButtonLi {
+        margin-top: 0.5em;
+        align-self: center;
+        display: flex;
+        flex-direction: column;
+    }
+    .AddButton {
+        margin-top: 0.5em;
+        background-color: colors.$base-color;
+        border: 1px solid colors.$base-color;
+        padding: 0.7em;
+        padding-right: 2em;
+        padding-left: 2em;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        align-self: center;
+        &:hover {
+            cursor: pointer;
+            background-color: #00bde9;
+        }
+    }
+}

@@ -5,7 +5,7 @@ import {DateStruct} from '../../api/nsu_base';
 
 const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-function DateForm(props: {name: string, onChange: (date: DateStruct) => void}) {
+function DateForm(props: {className?: string, name: string, onChange: (date: DateStruct) => void}) {
     const [visible, setVisible] = useState(false);
     const [focus, setFocus] = useState(false);
     const [date, setDate] = useState<DateStruct>({
@@ -14,7 +14,7 @@ function DateForm(props: {name: string, onChange: (date: DateStruct) => void}) {
         year: NaN
     });
 
-    return <div className={"DateForm"}>
+    return <div className={"DateForm " + (props.className || "")}>
         <label className={visible ? "clicked" : ""} onClick={e => {setVisible(!visible)}}>{props.name}</label>
         <div className={(visible ? "" : "hidden ")  + (focus ? "focus" : "")}>
             <input onFocus={e => setFocus(true)}

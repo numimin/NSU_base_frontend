@@ -23,6 +23,15 @@
     }
 }
 
+.EditIcon {
+    height: 2em;
+    align-self: center;
+    margin-left: 0.6em;
+    &:hover {
+        cursor: pointer;
+    }
+}
+
 .Nav {
     display: flex;
     flex-direction: row;

@@ -20,11 +20,11 @@ export function convertToItemWithFunction(a: any, name?: (t: any) => string): It
     }
 }
 
-function IdRadio(props: {callback?: () => void, name: string, items: Item[] | null | undefined, id: number | null | undefined, setId: (id: number) => void}) {
+function IdRadio(props: {className?: string, callback?: () => void, name: string, items: Item[] | null | undefined, id: number | null | undefined, setId: (id: number) => void}) {
     const [visible, setVisible] = useState(false);
     const [firstVisible, setFirstVisible] = useState(false);
     
-    return <li className="IdCheckbox">
+    return <li className={"IdCheckbox " + (props.className || "")}>
         {
         <>
             <p className={visible ? "clicked" : ""} onClick={
@@ -67,7 +67,7 @@ function IdRadio(props: {callback?: () => void, name: string, items: Item[] | nu
     </li>;
 }
 
-function IdCheckbox(props: {callback?: () => void, name: string, items: Item[] | null | undefined, ids: number[] | null | undefined, setIds: (ids: number[]) => void}) {
+function IdCheckbox(props: {className?: string, callback?: () => void, name: string, items: Item[] | null | undefined, ids: number[] | null | undefined, setIds: (ids: number[]) => void}) {
     const [visible, setVisible] = useState(false);
     const [firstVisible, setFirstVisible] = useState(false);
     

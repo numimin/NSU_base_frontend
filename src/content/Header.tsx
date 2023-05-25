@@ -16,6 +16,7 @@ function Header() {
             <li onMouseEnter={e => setVisible(1)}>ЗАНЯТИЯ</li>
             <li onMouseEnter={e => setVisible(2)}>ОЦЕНКИ И ЭКЗАМЕНЫ</li>
             <li onMouseEnter={e => setVisible(3)}>ДИПЛОМНЫЕ РАБОТЫ</li>
+            <img onClick={e => navigate("/edit")} className="EditIcon" src='/icons/edit.png'/>
         </ol>
         <ol className='NavList'>
             <li onMouseEnter={e => setHovered(0)} onMouseLeave={e => {

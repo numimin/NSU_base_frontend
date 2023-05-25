@@ -13,9 +13,9 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 	const [maxScholarship, setMaxScholarship] = useState<number | null>(props.query.maxScholarship);
 	const [facultyIds, setFacultyIds] = useState<number[]>(props.query.facultyIds);
 	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
 	const [groupIds, setGroupIds] = useState<number[]>(props.query.groupIds);
 	const [groups, setGroups] = useState<Group[] | null>(null);
-	const [firstVisible, setFirstVisible] = useState(false);
 
 	const onChange = (params: {
 		gender?: Gender,
@@ -88,7 +88,7 @@ function StudentsForm(props: {query: StudentQuery, onChange: (query: StudentQuer
 					options={[{name: "Не указано", value: "NONE"},
 							  {name: "Есть", value: "TRUE"},
 							  {name: "Нет", value: "FALSE"}]} 
-					value={gender}
+					value={hasChildren}
 					onChange={value => {
 						setHasChildren(value as SBoolean);
 						onChange({hasChildren: value as SBoolean});

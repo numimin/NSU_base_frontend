@@ -501,3 +501,27 @@ export async function getTeachersLoad(query: StudentsGraduateWorksQuery, abortSi
 		});
 	return get<Load>(response);
 }
+
+export interface AddStudentQuery {
+	firstname: string;
+	lastname: string;
+	patronymic: string;
+	gender: Gender;
+	dateOfBirth: DateStruct;
+	hasChildren: boolean;
+	scholarship: number;
+	groupId: number;
+}
+
+export async function addStudent(query: AddStudentQuery, abortSignal?: AbortSignal): Promise<void | null> {
+	const response = fetch('/api/student/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<void>(response);
+}

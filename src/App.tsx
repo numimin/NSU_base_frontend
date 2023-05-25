@@ -18,12 +18,14 @@ import StudentsGraduateWorksPage from './content/task-11/StudentsGraduateWorksPa
 import TeachersGraduateWorksPage from './content/task-12/TeachersGraduateWorksPage';
 import TeachersLoadPage from './content/task-13/TeachersLoadPage';
 import { BrowserRouter, Navigate, Route, Routes, useNavigate } from 'react-router-dom';
+import EditPage from './content/edit/EditPage';
 
 function App() {
   return <div className="App">
     <BrowserRouter>
       <Routes>
         <Route index element={<Navigate to='/tasks/task-01'/>}/>
+        <Route path='/edit' element={<EditPage/>}/>
         <Route path="/tasks/task-01" element={<StudentsPage/>}/>
         <Route path="/tasks/task-02" element={<TeachersPage/>}/>
         <Route path="/tasks/task-03" element={<DissertationsPage/>}/>

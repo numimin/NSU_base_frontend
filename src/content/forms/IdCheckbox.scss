@@ -45,3 +45,18 @@
         margin-left: 0.25em;
     }
 }
+
+.EditForm {
+    li {
+        margin-bottom: 0;
+    }
+}
+
+.IdCheckbox.EditRadio {
+    margin-left: 0;
+    margin-bottom: 0;
+    li, p {
+        margin: 0;
+        margin-left: 0;
+    }
+}
