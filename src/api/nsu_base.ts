@@ -581,3 +581,11 @@ export async function addTeacher(query: AddTeacherQuery, abortSignal?: AbortSign
 	});
 	return get<Result>(response);
 }
+
+export async function deleteTeacher(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/teacher/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}

@@ -12,25 +12,35 @@ function TeacherLessonsPage() {
 		lessonId: null,
 		facultyId: null,
 	});
+	const [update, setUpdate] = useState(true);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			const response = await getTeacherLessons(query, controller.signal);
-			if (response !== null) {
-				setTeachers(response);				
-			}
-			controller = null;
-		}) ();
+		if (update) {
+			(async () => {
+				const response = await getTeacherLessons(query, controller.signal);
+				if (response !== null) {
+					setTeachers(response);				
+				}
+				controller = null;
+				setUpdate(false);
+				if (!response) {
+					setUpdate(true);
+				}
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [query]);
+	}, [query, update]);
 
 	return <>
 		<Header/>
 		<div className='Split'>
-			<TeacherForm query={query} onChange={setQuery}/>
+			<TeacherForm query={query} onChange={q => {
+				setQuery(q);
+				setUpdate(true);
+			}}/>
 			<div>
-				<Teachers teachers={teachers}/>
+				<Teachers update={() => setUpdate(true)} teachers={teachers}/>
 			</div>
 		</div>
 	</>;

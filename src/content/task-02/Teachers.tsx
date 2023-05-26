@@ -1,7 +1,7 @@
 import {useState, useEffect} from 'react';
-import {Teacher, Faculty, Department, getDepartment, getFaculty} from '../../api/nsu_base';
+import {Teacher, Faculty, Department, getDepartment, getFaculty, deleteTeacher} from '../../api/nsu_base';
 
-function TeacherView(props: {teacher: Teacher}) {
+function TeacherView(props: {update: () => void, teacher: Teacher}) {
 	const [faculty, setFaculty] = useState<Faculty | null>(null);
 	const [department, setDepartment] = useState<Department | null>(null);
 	const [visible, setVisible] = useState(false);
@@ -35,6 +35,14 @@ function TeacherView(props: {teacher: Teacher}) {
 		<div onClick={e => {setVisible(!visible); setfirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>
 			<p>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
 			<img src="/icons/delete.png" onClick={e => {
+				(async () => {
+					const response = await deleteTeacher(teacher.id);
+					if (!response?.result) {
+						alert(response?.message);
+					}
+					props.update();
+				})();
+				e.stopPropagation();
 			}}/>
 		</div>
 		<div hidden={!visible} className={'content '  + (visible ? "" : "hidden")}>
@@ -54,7 +62,7 @@ function TeacherView(props: {teacher: Teacher}) {
 	</li>;
 }
 
-function Teachers(props: {teachers: Teacher[]}) {
+function Teachers(props: {update: () => void, teachers: Teacher[]}) {
 	return <div>
 		<h2 className='ListHeader'>Преподаватели</h2>
 		<ol className='List'>
@@ -69,7 +77,7 @@ function Teachers(props: {teachers: Teacher[]}) {
 						return -1;
 					}
 					return 0;
-				}).map(teacher => <TeacherView key={teacher.id} teacher={teacher}/>)
+				}).map(teacher => <TeacherView update={props.update} key={teacher.id} teacher={teacher}/>)
 			}
 		</ol>
 	</div>;
