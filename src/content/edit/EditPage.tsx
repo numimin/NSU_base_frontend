@@ -2,7 +2,7 @@ import {useState, useEffect, ReactElement} from 'react';
 import Header from '../Header';
 import './EditPage.scss';
 import DateForm from '../forms/DateForm';
-import { Category, DateStruct, Department, Gender, Group, SBoolean, addStudent, addTeacher, getDepartments, getGroups } from '../../api/nsu_base';
+import { Category, DateStruct, Department, Faculty, Gender, Group, SBoolean, addGroup, addStudent, addTeacher, deleteGroup, getDepartments, getFaculties, getGroups } from '../../api/nsu_base';
 import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
 import { IdRadio, convertToItem } from '../forms/IdCheckbox';
@@ -302,6 +302,138 @@ function AddTeacher() {
     </form>;
 }
 
+function AddGroup() {
+    const [name, setName] = useState("");
+    const [date, setDate] = useState<DateStruct | null>(null);
+	const [facultyId, setFacultyId] = useState<number | null>(null);
+	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (name === "") {
+               alert("Название должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!date) {
+                alert("Дата не заполнена");
+                setLoadingStudent(false)
+                return;
+           }
+           if (!facultyId) {
+            alert("Факультет не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await addGroup({
+                   name: name,
+                   facultyId: facultyId,
+                   date: date,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={name} onChange={e => setName(e.target.value)}/>
+            </li>
+            <DateForm className='EditDate' name="Дата начала занятий" onChange={date => setDate(date)}/>
+			<IdRadio
+                className="EditRadio"
+				name="Факультет"
+				items={faculties?.map(convertToItem)}
+				id={facultyId}
+				setId={newIds => {
+					setFacultyId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                {
+                    loadingStudent ? <div className='AddButton loading'>
+                        <img src="/icons/loading.png"/>
+                    </div> 
+                    : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
+                }
+                
+            </li>
+        </ol>
+    </form>;
+}
+
+function DeleteGroup() {
+    const [name, setName] = useState("");
+    const [groups, setGroups] = useState<Group[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [groupId, setGroupId] = useState<number | null>(null);
+    const [update, setUpdate] = useState(true);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setGroups(await getGroups([], controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={name} onChange={e => setName(e.target.value)}/>
+            </li>
+			<IdRadio
+                className="EditRadio"
+				name="Группа"
+				items={groups?.filter(g => {
+                    return name === "" || g.name === name;
+                }).map(convertToItem)}
+				id={groupId}
+				setId={newIds => {
+					setGroupId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                <button type="button" className={'AddButton'} onClick={e => {
+                    (async () => {
+                        if (groupId) {
+                            const response = await deleteGroup(groupId);
+                            alert(response?.message);
+                            setUpdate(true); 
+                        }
+                    })();
+                }}>Удалить</button>
+            </li>
+        </ol>
+    </form>;
+}
+
 function EditHeader(props: {children?: ReactElement | ReactElement[], name: string}) {
     const [visible, setVisible] = useState(false);
     
@@ -324,6 +456,12 @@ function EditPage() {
             </EditHeader>
             <EditHeader name='Добавить преподавателя'>
                 <AddTeacher/>
+            </EditHeader>
+            <EditHeader name='Добавить группу'>
+                <AddGroup/>
+            </EditHeader>
+            <EditHeader name='Удалить группу'>
+                <DeleteGroup/>
             </EditHeader>
         </ol>
     </>

@@ -604,3 +604,30 @@ export async function updateTeacher(id: number, query: AddTeacherQuery, abortSig
 	});
 	return get<Result>(response);
 }
+
+export interface AddGroupQuery {
+	name: string;
+	date: DateStruct;
+	facultyId: number;
+}
+
+export async function addGroup(query: AddGroupQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/group/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function deleteGroup(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/group/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
