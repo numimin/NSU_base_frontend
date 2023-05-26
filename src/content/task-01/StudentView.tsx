@@ -1,11 +1,171 @@
 import { useEffect, useState } from "react";
-import { Faculty, Group, Student, deleteStudent, getFaculty, getGroup } from "../../api/nsu_base";
+import { DateStruct, Faculty, Gender, Group, SBoolean, Student, addStudent, deleteStudent, getFaculty, getGroup, getGroups, updateStudent } from "../../api/nsu_base";
+import DateForm from "../forms/DateForm";
+import { Select } from "../forms/Select";
+import CheckedInput from "../forms/CheckedInput";
+import { IdRadio, convertToItem } from "../forms/IdCheckbox";
+
+function fromString(date: string): DateStruct {
+	const year = parseInt(date.slice(0, 4));
+	const month = parseInt(date.slice(5, 7));
+	const day = parseInt(date.slice(8, 10));
+	return {
+		year: year,
+		month: month,
+		day: day
+	}
+}
+
+function AddStudent(props: {
+	id: number, 
+	name: string,
+	surname: string,
+	patronymic: string,
+	dateOfBirth: DateStruct,
+	gender: Gender,
+	hasChildren: SBoolean,
+	scholarship: number,
+	groupIds: number | null,
+	update: () => void,
+}) {
+    const [name, setName] = useState(props.name);
+    const [surname, setSurname] = useState(props.surname);
+    const [patronymic, setPatronymic] = useState(props.patronymic);
+    const [dateOfBirth, setDateOfBirth] = useState<DateStruct | null>(props.dateOfBirth);
+    const [gender, setGender] = useState(props.gender);
+    const [hasChildren, setHasChildren] = useState(props.hasChildren);
+    const [scholarship, setScholarship] = useState<number | null>(props.scholarship);
+	const [groupIds, setGroupIds] = useState<number | null>(props.groupIds);
+	const [groups, setGroups] = useState<Group[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setGroups(await getGroups([], controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (name === "") {
+               alert("Имя должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (surname === "") {
+               alert("Фамилия должна быть заполнена");
+               setLoadingStudent(false);
+               return;
+           }
+           if (patronymic === "") {
+               alert("Отчество должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!dateOfBirth) {
+               alert("Дата рождения должна быть заполнена");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!scholarship) {
+               alert("Размер стипендии должен быть заполнен");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!groupIds) {
+               alert("Группа должна быть выбрана");
+               setLoadingStudent(false);
+               return;
+           }
+
+           (async () => {
+               const response = await updateStudent(props.id, {
+                   firstname: name,
+                   lastname: surname,
+                   patronymic: patronymic,
+                   gender: gender as Gender,
+                   groupId: groupIds,
+                   scholarship: scholarship,
+                   hasChildren: hasChildren === "TRUE",
+                   dateOfBirth: dateOfBirth
+               });
+			   props.update();
+               alert(response?.message);
+               setLoadingStudent(false);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={name} onChange={e => setName(e.target.value)}/>
+            </li>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Фамилия:</strong></label>
+                <input value={surname} onChange={e => setSurname(e.target.value)}/>
+            </li>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Отчество:</strong></label>
+                <input value={patronymic} onChange={e => setPatronymic(e.target.value)}/>
+            </li>
+            <DateForm dateStruct={dateOfBirth || undefined} className='EditDate' name="Дата рождения" onChange={date => setDateOfBirth(date)}/>
+			<Select className='EditSelect' name="Пол"
+					options={[{name: "Мужской", value: "MALE"},
+							  {name: "Женский", value: "FEMALE"}]} 
+					value={gender}
+					onChange={value => {
+						setGender(value as Gender);
+					}}/>
+			<Select className="EditSelect" name="Дети"
+					options={[{name: "Есть", value: "TRUE"},
+							  {name: "Нет", value: "FALSE"}]} 
+					value={hasChildren}
+					onChange={value => {
+						setHasChildren(value as SBoolean);
+					}}/>
+			<li>
+				<CheckedInput className="EditInput" name="Стипендия" min={0} value={scholarship} onChange={newScholarship => {
+					setScholarship(newScholarship);
+				}}/>
+			</li>
+			<IdRadio
+                className="EditRadio"
+				name="Группы"
+				items={groups?.map(convertToItem)}
+				id={groupIds}
+				setId={newIds => {
+					setGroupIds(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                {
+                    loadingStudent ? <div className='AddButton loading'>
+                        <img src="/icons/loading.png"/>
+                    </div> 
+                    : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
+                }
+                
+            </li>
+        </ol>
+    </form>;
+}
 
 function StudentView(props: {update: () => void, student: Student, theme?: string}) {
 	const [group, setGroup] = useState<Group | null>(null);
 	const [faculty, setFaculty] = useState<Faculty | null>(null);
 	const [visible, setVisible] = useState(false);
 	const [firstVisible, setFirstVisible] = useState(false);
+	const [updateVisible, setUpdateVisible] = useState(false);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
@@ -32,8 +192,22 @@ function StudentView(props: {update: () => void, student: Student, theme?: strin
 
 	const student = props.student;
 	return <>
-		<div onClick={e => {setVisible(!visible); setFirstVisible(true);}}className={"header" + (visible ? " visible" : "")}>
+		<div onClick={e => {{
+			setVisible(!visible);
+			if (!visible) {
+				setUpdateVisible(false);
+			}
+			setFirstVisible(true);
+		}}}className={"header" + ((visible || updateVisible) ? " visible" : "")}>
 			<p>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
+			<img src="/icons/edit.png" onClick={e => {
+				if (!updateVisible) {
+					setVisible(false);
+				}
+				setUpdateVisible(!updateVisible);
+				setFirstVisible(true);
+				e.stopPropagation();
+			}}/>
 			<img src="/icons/delete.png" onClick={e => {
 				(async () => {
 					const response = await deleteStudent(student.id);
@@ -41,6 +215,20 @@ function StudentView(props: {update: () => void, student: Student, theme?: strin
 					alert(response?.message);	
 				})();
 			}}/>
+		</div>
+		<div hidden={!updateVisible}>
+			<AddStudent
+				id={props.student.id}
+				name={props.student.firstname}
+				surname={props.student.lastname}
+				patronymic={props.student.patronymic}
+				dateOfBirth={fromString(props.student.dateOfBirth)}
+				gender={props.student.gender}
+				hasChildren={props.student.hasChildren ? "TRUE" : "FALSE"}
+				scholarship={props.student.scholarship}
+				groupIds={props.student.groupId}
+				update={props.update}
+			/>
 		</div>
 		<div hidden={!visible} className={"content " + (visible ? "" : "hidden")}>
 			{

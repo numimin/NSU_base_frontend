@@ -540,3 +540,16 @@ export async function deleteStudent(id: number, abortSignal?: AbortSignal): Prom
 	});
 	return get<Result>(response);
 }
+
+export async function updateStudent(id: number, query: AddStudentQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/student/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}

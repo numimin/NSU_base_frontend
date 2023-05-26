@@ -37,6 +37,7 @@
         font-weight: bold;
         display: flex;
         justify-content: space-between;
+        gap: 0.5em;
 
         p {
             margin: 0;
@@ -69,6 +70,9 @@
             height: 1em;
             align-self: center;
             filter: invert(100%);
+            &:hover {
+                cursor: pointer;
+            }
         }
 
         &:hover {

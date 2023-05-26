@@ -5,13 +5,13 @@ import {DateStruct} from '../../api/nsu_base';
 
 const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
-function DateForm(props: {className?: string, name: string, onChange: (date: DateStruct) => void}) {
+function DateForm(props: {dateStruct?: DateStruct, className?: string, name: string, onChange: (date: DateStruct) => void}) {
     const [visible, setVisible] = useState(false);
     const [focus, setFocus] = useState(false);
     const [date, setDate] = useState<DateStruct>({
-        day: NaN,
-        month: NaN,
-        year: NaN
+        day: props.dateStruct?.day || NaN,
+        month: props.dateStruct?.month || NaN,
+        year: props.dateStruct?.year || NaN,
     });
 
     return <div className={"DateForm " + (props.className || "")}>
