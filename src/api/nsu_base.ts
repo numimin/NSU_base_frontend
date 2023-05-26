@@ -1,3 +1,5 @@
+import { abort } from "process";
+
 export type Gender = "NONE" | "MALE" | "FEMALE";
 export type SBoolean = "NONE" | "TRUE" | "FALSE";
 
@@ -513,7 +515,12 @@ export interface AddStudentQuery {
 	groupId: number;
 }
 
-export async function addStudent(query: AddStudentQuery, abortSignal?: AbortSignal): Promise<void | null> {
+export interface Result {
+	result: boolean;
+	message: string;
+}
+
+export async function addStudent(query: AddStudentQuery, abortSignal?: AbortSignal): Promise<Result | null> {
 	const response = fetch('/api/student/add',
 	{
 		method: 'POST',
@@ -523,5 +530,13 @@ export async function addStudent(query: AddStudentQuery, abortSignal?: AbortSign
 		body: JSON.stringify(query),
 		signal: abortSignal
 	});
-	return get<void>(response);
+	return get<Result>(response);
+}
+
+export async function deleteStudent(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/student/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
 }

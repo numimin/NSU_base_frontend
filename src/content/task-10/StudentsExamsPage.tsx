@@ -15,24 +15,34 @@ function StudentsExamsPage() {
         start: null,
         end: null,
     });
+    const [update, setUpdate] = useState(true);
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			const response = await getStudentsByExams(query, controller.signal);
-			if (response !== null) {
-				setStudents(response);				
-			}
-			controller = null;
-		}) ();
+        if (update) {
+            (async () => {
+                const response = await getStudentsByExams(query, controller.signal);
+                if (response !== null) {
+                    setStudents(response);				
+                }
+                controller = null;
+                setUpdate(false);
+				if (!response) {
+					setUpdate(true);
+				}
+            }) ();
+        }
 		return () => controller?.abort();
-	}, [query]);
+	}, [query, update]);
 
     return <>
         <Header/>
         <div className='Split'>
-            <StudentForm query={query} onChange={setQuery}/>
-            <Students students={students}/>
+            <StudentForm query={query} onChange={q => {
+                setQuery(q);
+                setUpdate(true);
+            }}/>
+            <Students update={() => setUpdate(true)} students={students}/>
         </div>
     </>;
 }

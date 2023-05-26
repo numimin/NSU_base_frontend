@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { Faculty, Group, Student, getFaculty, getGroup } from "../../api/nsu_base";
+import { Faculty, Group, Student, deleteStudent, getFaculty, getGroup } from "../../api/nsu_base";
 
-function StudentView(props: {student: Student, theme?: string}) {
+function StudentView(props: {update: () => void, student: Student, theme?: string}) {
 	const [group, setGroup] = useState<Group | null>(null);
 	const [faculty, setFaculty] = useState<Faculty | null>(null);
 	const [visible, setVisible] = useState(false);
@@ -32,7 +32,16 @@ function StudentView(props: {student: Student, theme?: string}) {
 
 	const student = props.student;
 	return <>
-		<p onClick={e => {setVisible(!visible); setFirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
+		<div onClick={e => {setVisible(!visible); setFirstVisible(true);}}className={"header" + (visible ? " visible" : "")}>
+			<p>{`${student.firstname} ${student.lastname} ${student.patronymic}`}</p>
+			<img src="/icons/delete.png" onClick={e => {
+				(async () => {
+					const response = await deleteStudent(student.id);
+					props.update();
+					alert(response?.message);	
+				})();
+			}}/>
+		</div>
 		<div hidden={!visible} className={"content " + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>

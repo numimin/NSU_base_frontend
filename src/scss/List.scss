@@ -11,8 +11,8 @@
     display: flex;
     flex-wrap: wrap;
     align-items: start;
-    gap: 0.1em;
-
+    column-gap: 4em;
+    
     ol {
         padding: 0;
         margin: 0;
@@ -35,11 +35,40 @@
         margin-right: 2em;
         margin-left: 0.1em;
         font-weight: bold;
+        display: flex;
+        justify-content: space-between;
 
-        &::after {
-            content: " ▶";
-            float: right;
-            font-size: 0.8em;
+        p {
+            margin: 0;
+            padding: 0;
+            align-self: center;
+            display: flex;
+            justify-content: space-between;
+            flex-grow: 1;
+            &::after {
+                content: " ▶";
+                margin-right: 1em;
+                align-self: center;
+                font-size: 0.8em;
+                animation-name: arrow-rotate-backward;
+                animation-timing-function: linear;
+                rotate: 0deg;
+                animation-duration: 0.3s;
+                @keyframes arrow-rotate-backward {
+                    from {
+                        rotate: 90deg;
+                    }
+                    to {
+                        rotate: 0deg;
+                    }
+                }
+            }
+        }
+        
+        img {
+            height: 1em;
+            align-self: center;
+            filter: invert(100%);
         }
 
         &:hover {
@@ -48,9 +77,21 @@
     }
 
     .header.visible {
-        &::after {
-            content: " ▼";
-            margin-top: 0.25em;
+        p {
+            &::after {
+                animation-duration: 0.3s;
+                animation-name: arrow-rotate;
+                animation-timing-function: linear;
+                rotate: 90deg;
+                @keyframes arrow-rotate {
+                    from {
+                        rotate: 0deg;
+                    }
+                    to {
+                        rotate: 90deg;
+                    }
+                }
+            }
         }
     }
 
@@ -66,7 +107,7 @@
 
     .content {
         border: 3px solid colors.$base-color;
-        width: calc(100% - 4.3em);
+        width: 17em;
         padding: 1em;
         margin-top: 1em;
 

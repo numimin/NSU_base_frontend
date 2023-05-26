@@ -2,13 +2,13 @@ import {useState, useEffect} from 'react';
 import {Student, Group, getGroup, Faculty, getFaculty} from '../../api/nsu_base';
 import StudentView from './StudentView';
 
-function StudentItem(props: {key: number, student: Student}) {
+function StudentItem(props: {update: () => void, key: number, student: Student}) {
 	return <li>
-		<StudentView key={props.key} student={props.student}/>
+		<StudentView update={props.update} key={props.key} student={props.student}/>
 	</li>;
 }
 
-function Students(props: {students: Student[]}) {
+function Students(props: {update: () => void, students: Student[]}) {
 	return <div>
 		<h2 className='ListHeader'>Студенты</h2>
 		<ol className='List'>
@@ -24,7 +24,9 @@ function Students(props: {students: Student[]}) {
 					}
 					return 0;
 				}).map(student => {
-					return <StudentItem key={student.id} student={student}/>
+					return <StudentItem key={student.id} student={student} update={() => {
+						props.update();
+					}}/>
 				})
 			}
 		</ol>

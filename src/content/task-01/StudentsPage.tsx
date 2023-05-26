@@ -16,23 +16,33 @@ function StudentsPage() {
 		facultyIds: [],
 	});
 	const [students, setStudents] = useState<Student[]>([]);
+	const [update, setUpdate] = useState(true);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			if (!query) return;
-			const response = await getStudents(query, controller.signal);
-			setStudents(response ? response : []);
-			controller = null;
-		}) ();
+		if (update) {
+			(async () => {
+				if (!query) return;
+				const response = await getStudents(query, controller.signal);
+				setStudents(response ? response : []);
+				controller = null;
+				setUpdate(false);
+				if (!response) {
+					setUpdate(true);
+				}
+			}) ();
+		}
 		return () => controller?.abort();
-	}, [query]);
+	}, [query, update]);
 
 	return <>
 		<Header/>
 		<div className='Split'>
-			<StudentsForm query={query} onChange={q => setQuery(q)}/>
-			<Students students={students}/>
+			<StudentsForm query={query} onChange={q => {
+				setQuery(q);
+				setUpdate(true);
+			}}/>
+			<Students update={() => setUpdate(true)}students={students}/>
 		</div>
 	</>;
 }

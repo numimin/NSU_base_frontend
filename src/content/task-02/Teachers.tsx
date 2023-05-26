@@ -32,7 +32,11 @@ function TeacherView(props: {teacher: Teacher}) {
 
 	const teacher = props.teacher;
 	return <li>
-		<p onClick={e => {setVisible(!visible); setfirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
+		<div onClick={e => {setVisible(!visible); setfirstVisible(true);}} className={"header " + (visible ? "visible" : "")}>
+			<p>{`${teacher.firstname} ${teacher.lastname} ${teacher.patronymic}`}</p>
+			<img src="/icons/delete.png" onClick={e => {
+			}}/>
+		</div>
 		<div hidden={!visible} className={'content '  + (visible ? "" : "hidden")}>
 			{
 				faculty && <p><strong>{faculty.name}</strong></p>

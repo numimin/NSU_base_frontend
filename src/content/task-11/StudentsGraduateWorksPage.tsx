@@ -10,24 +10,34 @@ function StudentsGraduateWorksPage() {
         teacherId: null,
         departmentId: null,
     });
+    const [update, setUpdate] = useState(true);
 
     useEffect(() => {
 		let controller: AbortController | null = new AbortController();
-		(async () => {
-			const response = await getStudentsWithGraduateWorks(query, controller.signal);
-			if (response !== null) {
-				setStudents(response);				
-			}
-			controller = null;
-		}) ();
+        if (update) {
+            (async () => {
+                const response = await getStudentsWithGraduateWorks(query, controller.signal);
+                if (response !== null) {
+                    setStudents(response);				
+                }
+                controller = null;
+                setUpdate(false);
+				if (!response) {
+					setUpdate(true);
+				}
+            }) ();
+        }
 		return () => controller?.abort();
-	}, [query]);
+	}, [query, update]);
 
     return <>
         <Header/>
         <div className='Split'>
-            <StudentGraduateWorkForm query={query} onChange={setQuery}/>
-            <StudentsGraduateWorks students={students}/>
+            <StudentGraduateWorkForm query={query} onChange={q => {
+                setQuery(q);
+                setUpdate(true);
+            }}/>
+            <StudentsGraduateWorks update={() => setUpdate(true)} students={students}/>
         </div>
     </>;
 }

@@ -14,7 +14,7 @@
 .FormContent {
     display: flex;
     flex-direction: column;
-    gap: 0.1em;
+    gap: 0.5em;
 
     .AddButtonLi {
         margin-top: 0.5em;
@@ -36,6 +36,28 @@
         &:hover {
             cursor: pointer;
             background-color: #00bde9;
+        }
+    }
+    .AddButton.loading {
+        padding: 0.3em;
+        padding-left: 3.125em;
+        padding-right: 3.125em;
+        img {
+            height: 1.5em;
+            animation-duration: 0.7s;
+            animation-name: loading-rotate;
+            animation-iteration-count: infinite;
+            animation-timing-function: linear;
+            filter: invert(100%);
+        }
+    }
+
+    @keyframes loading-rotate {
+        from {
+            rotate: 0deg;
+        }
+        to {
+            rotate: 360deg;
         }
     }
 }
