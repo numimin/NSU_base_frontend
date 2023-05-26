@@ -137,6 +137,8 @@ export interface Teacher {
 	graduateStudent: boolean;
 	phdThesisDate: string;
 	departmentId: number;
+	phdDissertation: string | null;
+	doctoralDissertation: string | null;
 }
 
 export interface TeachersQuery {
@@ -585,6 +587,19 @@ export async function addTeacher(query: AddTeacherQuery, abortSignal?: AbortSign
 export async function deleteTeacher(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
 	const response = fetch(`/api/teacher/delete?id=${id}`, {
 		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function updateTeacher(id: number, query: AddTeacherQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/teacher/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
 		signal: abortSignal
 	});
 	return get<Result>(response);
