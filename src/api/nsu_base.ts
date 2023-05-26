@@ -553,3 +553,31 @@ export async function updateStudent(id: number, query: AddStudentQuery, abortSig
 	});
 	return get<Result>(response);
 }
+
+export interface AddTeacherQuery {
+	firstname: string,
+	lastname: string,
+	patronymic: string,
+	category: Category,
+	gender: Gender,
+	hasChildren: boolean,
+	salary: number,
+	graduateStudent: boolean,
+	phdThesisDate: DateStruct | null,
+	departmentId: number,
+	phdDissertation: string | null,
+	doctoralDissertation: string | null,
+}
+
+export async function addTeacher(query: AddTeacherQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/teacher/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}

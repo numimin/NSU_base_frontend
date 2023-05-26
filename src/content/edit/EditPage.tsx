@@ -2,7 +2,7 @@ import {useState, useEffect, ReactElement} from 'react';
 import Header from '../Header';
 import './EditPage.scss';
 import DateForm from '../forms/DateForm';
-import { DateStruct, Gender, Group, SBoolean, addStudent, getGroups } from '../../api/nsu_base';
+import { Category, DateStruct, Department, Gender, Group, SBoolean, addStudent, addTeacher, getDepartments, getGroups } from '../../api/nsu_base';
 import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
 import { IdRadio, convertToItem } from '../forms/IdCheckbox';
@@ -143,12 +143,16 @@ function AddTeacher() {
     const [name, setName] = useState("");
     const [surname, setSurname] = useState("");
     const [patronymic, setPatronymic] = useState("");
-    const [dateOfBirth, setDateOfBirth] = useState<DateStruct | null>(null);
+    const [category, setCategory] = useState("ASSISTANT");
     const [gender, setGender] = useState("MALE");
     const [hasChildren, setHasChildren] = useState("FALSE");
-    const [scholarship, setScholarship] = useState<number | null>(0);
-	const [groupIds, setGroupIds] = useState<number | null>(null);
-	const [groups, setGroups] = useState<Group[] | null>(null);
+    const [salary, setSalary] = useState<number | null>(0);
+    const [graduateStudent, setGraduateStudent] = useState("FALSE");
+    const [phdThesisDate, setPhdThesisDate] = useState<DateStruct | null>(null);
+	const [departmentId, setDepartmentId] = useState<number | null>(null);
+	const [departments, setDepartments] = useState<Department[] | null>(null);
+    const [phdDissertation, setPhdDissertation] = useState<string | null>(null);
+    const [doctoralDissertation, setDoctoralDissertation] = useState<string | null>(null);
 	const [firstVisible, setFirstVisible] = useState(false);
     
     const [loadingStudent, setLoadingStudent] = useState(false);
@@ -157,7 +161,7 @@ function AddTeacher() {
 		let controller: AbortController | null = new AbortController();
 		if (firstVisible) {
 			(async () => {
-				setGroups(await getGroups([], controller.signal));
+				setDepartments(await getDepartments([], controller.signal));
 				controller = null;
 			}) ();
 		}
@@ -181,32 +185,36 @@ function AddTeacher() {
                setLoadingStudent(false);
                return;
            }
-           if (!dateOfBirth) {
-               alert("Дата рождения должна быть заполнена");
+           if (!salary) {
+               alert("Размер зарплаты должен быть заполнен");
                setLoadingStudent(false);
                return;
            }
-           if (!scholarship) {
-               alert("Размер стипендии должен быть заполнен");
+           if (!departmentId) {
+               alert("Кафедра должна быть выбрана");
                setLoadingStudent(false);
                return;
            }
-           if (!groupIds) {
-               alert("Группа должна быть выбрана");
-               setLoadingStudent(false);
-               return;
+           if (!(phdDissertation !== null && phdThesisDate !== null)) {
+                alert("Если Вы указали дату защиты, укажите диссертацию, и наоборот");
+                setLoadingStudent(false)
+                return;
            }
 
            (async () => {
-               const response = await addStudent({
+               const response = await addTeacher({
                    firstname: name,
                    lastname: surname,
                    patronymic: patronymic,
                    gender: gender as Gender,
-                   groupId: groupIds,
-                   scholarship: scholarship,
+                   departmentId: departmentId,
+                   salary: salary,
                    hasChildren: hasChildren === "TRUE",
-                   dateOfBirth: dateOfBirth
+                   phdThesisDate: phdThesisDate,
+                   category: category as Category,
+                   graduateStudent: graduateStudent === "TRUE",
+                   phdDissertation: phdDissertation,
+                   doctoralDissertation: doctoralDissertation
                });
                alert(response?.message);
                setLoadingStudent(false);
@@ -228,13 +236,21 @@ function AddTeacher() {
                 <label htmlFor='name'><strong>Отчество:</strong></label>
                 <input value={patronymic} onChange={e => setPatronymic(e.target.value)}/>
             </li>
-            <DateForm className='EditDate' name="Дата рождения" onChange={date => setDateOfBirth(date)}/>
+            <DateForm className='EditDate' name="Дата защиты" onChange={date => setPhdThesisDate(date)}/>
 			<Select className='EditSelect' name="Пол"
 					options={[{name: "Мужской", value: "MALE"},
 							  {name: "Женский", value: "FEMALE"}]} 
 					value={gender}
 					onChange={value => {
 						setGender(value as Gender);
+					}}/>
+			<Select className='EditSelect' name="Категория"
+				    options={[{name: "Ассистент", value: "ASSISTANT"},
+				{name: "Доцент", value: "ASSISTANT_PROFESSOR"},
+				{name: "Профессор", value: "PROFESSOR"}]}
+					value={category}
+					onChange={value => {
+						setCategory(value as Category);
 					}}/>
 			<Select className="EditSelect" name="Дети"
 					options={[{name: "Есть", value: "TRUE"},
@@ -243,21 +259,36 @@ function AddTeacher() {
 					onChange={value => {
 						setHasChildren(value as SBoolean);
 					}}/>
+			<Select className="EditSelect" name="Обучается в аспирантуре"
+					options={[{name: "Да", value: "TRUE"},
+							  {name: "Нет", value: "FALSE"}]} 
+					value={graduateStudent}
+					onChange={value => {
+						setGraduateStudent(value as SBoolean);
+					}}/>
 			<li>
-				<CheckedInput className="EditInput" name="Стипендия" min={0} value={scholarship} onChange={newScholarship => {
-					setScholarship(newScholarship);
+				<CheckedInput className="EditInput" name="Зарплата" min={0} value={salary} onChange={newScholarship => {
+					setSalary(newScholarship);
 				}}/>
 			</li>
 			<IdRadio
                 className="EditRadio"
-				name="Группы"
-				items={groups?.map(convertToItem)}
-				id={groupIds}
+				name="Кафедра"
+				items={departments?.map(convertToItem)}
+				id={departmentId}
 				setId={newIds => {
-					setGroupIds(newIds);
+					setDepartmentId(newIds);
 				}}
 				callback={() => setFirstVisible(true)}
 				/>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Кандидатская диссертация:</strong></label>
+                <input value={phdDissertation || ""} onChange={e => setPhdDissertation(e.target.value === "" ? null : e.target.value)}/>
+            </li>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Докторская диссертация:</strong></label>
+                <input value={doctoralDissertation || ""} onChange={e => setDoctoralDissertation(e.target.value === "" ? null : e.target.value)}/>
+            </li>
             <li className='AddButtonLi'>
                 {
                     loadingStudent ? <div className='AddButton loading'>

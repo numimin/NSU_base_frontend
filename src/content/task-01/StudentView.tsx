@@ -96,8 +96,10 @@ function AddStudent(props: {
                    hasChildren: hasChildren === "TRUE",
                    dateOfBirth: dateOfBirth
                });
+			   if (!response?.result) {
+					alert(response?.message);
+			   }
 			   props.update();
-               alert(response?.message);
                setLoadingStudent(false);
            })(); 
        } 
@@ -147,9 +149,9 @@ function AddStudent(props: {
 				}}
 				callback={() => setFirstVisible(true)}
 				/>
-            <li className='AddButtonLi'>
+            <li className='AddButtonLi smol'>
                 {
-                    loadingStudent ? <div className='AddButton loading'>
+                    loadingStudent ? <div className='AddButton loading smol'>
                         <img src="/icons/loading.png"/>
                     </div> 
                     : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
@@ -211,8 +213,10 @@ function StudentView(props: {update: () => void, student: Student, theme?: strin
 			<img src="/icons/delete.png" onClick={e => {
 				(async () => {
 					const response = await deleteStudent(student.id);
+					if (!response?.result) {
+						alert(response?.message);
+					}
 					props.update();
-					alert(response?.message);	
 				})();
 			}}/>
 		</div>
@@ -227,7 +231,10 @@ function StudentView(props: {update: () => void, student: Student, theme?: strin
 				hasChildren={props.student.hasChildren ? "TRUE" : "FALSE"}
 				scholarship={props.student.scholarship}
 				groupIds={props.student.groupId}
-				update={props.update}
+				update={() => {
+					setUpdateVisible(false);
+					props.update();
+				}}
 			/>
 		</div>
 		<div hidden={!visible} className={"content " + (visible ? "" : "hidden")}>

@@ -22,6 +22,10 @@
         display: flex;
         flex-direction: column;
     }
+    .AddButtonLi.smol {
+        margin: 0;
+        padding: 0;
+    }
     .AddButton {
         margin-top: 0.5em;
         background-color: colors.$base-color;
@@ -50,6 +54,10 @@
             animation-timing-function: linear;
             filter: invert(100%);
         }
+    }
+    .AddButton.smol.loading {
+        margin: 0;
+        width: 1.5em;
     }
 
     @keyframes loading-rotate {
