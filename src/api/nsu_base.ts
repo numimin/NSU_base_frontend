@@ -683,3 +683,42 @@ export async function editFaculty(id: number, query: AddFacultyQuery, abortSigna
 	});
 	return get<Result>(response);
 }
+
+interface AddDepartmentQuery {
+	name: string;
+	facultyId: number;
+}
+
+export async function addDepartment(query: AddDepartmentQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/department/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function deleteDepartment(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/department/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function editDepartment(id: number, query: AddDepartmentQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/department/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}

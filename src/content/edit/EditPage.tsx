@@ -2,7 +2,7 @@ import {useState, useEffect, ReactElement} from 'react';
 import Header from '../Header';
 import './EditPage.scss';
 import DateForm from '../forms/DateForm';
-import { Category, DateStruct, Department, Faculty, Gender, Group, SBoolean, addFaculty, addGroup, addStudent, addTeacher, deleteFaculty, deleteGroup, editFaculty, editGroup, getDepartments, getFaculties, getGroups } from '../../api/nsu_base';
+import { Category, DateStruct, Department, Faculty, Gender, Group, SBoolean, addDepartment, addFaculty, addGroup, addStudent, addTeacher, deleteDepartment, deleteFaculty, deleteGroup, editDepartment, editFaculty, editGroup, getDepartments, getFaculties, getGroups } from '../../api/nsu_base';
 import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
 import { IdRadio, convertToItem } from '../forms/IdCheckbox';
@@ -728,6 +728,241 @@ function EditFaculty() {
     </form>;
 }
 
+function AddDepartment() {
+    const [name, setName] = useState("");
+	const [facultyId, setFacultyId] = useState<number | null>(null);
+	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (name === "") {
+               alert("Название должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!facultyId) {
+            alert("Факультет не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await addDepartment({
+                   name: name,
+                   facultyId: facultyId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={name} onChange={e => setName(e.target.value)}/>
+            </li>
+			<IdRadio
+                className="EditRadio"
+				name="Факультет"
+				items={faculties?.map(convertToItem)}
+				id={facultyId}
+				setId={newIds => {
+					setFacultyId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                {
+                    loadingStudent ? <div className='AddButton loading'>
+                        <img src="/icons/loading.png"/>
+                    </div> 
+                    : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
+                }
+                
+            </li>
+        </ol>
+    </form>;
+}
+
+function DeleteDepartment() {
+    const [name, setName] = useState("");
+    const [departments, setDepartments] = useState<Department[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [departmentId, setDepartmentId] = useState<number | null>(null);
+    const [update, setUpdate] = useState(true);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setDepartments(await getDepartments([], controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={name} onChange={e => setName(e.target.value)}/>
+            </li>
+			<IdRadio
+                className="EditRadio"
+				name="Кафедра"
+				items={departments?.filter(g => {
+                    return name === "" || g.name === name;
+                }).map(convertToItem)}
+				id={departmentId}
+				setId={newIds => {
+					setDepartmentId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                <button type="button" className={'AddButton'} onClick={e => {
+                    (async () => {
+                        if (departmentId) {
+                            const response = await deleteDepartment(departmentId);
+                            alert(response?.message);
+                            setUpdate(true); 
+                        }
+                    })();
+                }}>Удалить</button>
+            </li>
+        </ol>
+    </form>;
+}
+
+function EditDepartment() {
+    const [id, setId] = useState<number | null>(null);
+    const [name, setName] = useState("");
+	const [facultyId, setFacultyId] = useState<number | null>(null);
+	const [faculties, setFaculties] = useState<Faculty[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [update, setUpdate] = useState(true);
+    const [groups, setDepartments] = useState<Department[] | null>(null);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setDepartments(await getDepartments([], controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setFaculties(await getFaculties(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (name === "") {
+               alert("Название должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!facultyId) {
+            alert("Факультет не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!id) {
+            alert("Id must be not null");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await editDepartment(id, {
+                   name: name,
+                   facultyId: facultyId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+               setUpdate(true);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+			<IdRadio
+                className="EditRadio"
+				name="Кафедра"
+				items={groups?.map(convertToItem)}
+				id={id}
+				setId={newIds => {
+					setId(newIds);
+                    groups?.filter(g => g.id === newIds).forEach(g => {
+                        setName(g.name);
+                        setFacultyId(g.facultyId);
+                    });
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+             {
+                id && <div>
+                    <li className='TextInput'>
+                        <label htmlFor='name'><strong>Имя:</strong></label>
+                        <input value={name} onChange={e => setName(e.target.value)}/>
+                    </li>
+                    <IdRadio
+                        className="EditRadio"
+                        name="Факультет"
+                        items={faculties?.map(convertToItem)}
+                        id={facultyId}
+                        setId={newIds => {
+                            setFacultyId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <li className='AddButtonLi'>
+                        {
+                            loadingStudent ? <div className='AddButton loading'>
+                                <img src="/icons/loading.png"/>
+                            </div> 
+                            : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Изменить" : ""}</button>
+                        }
+                        
+                    </li>
+                </div>
+             }
+        </ol>
+    </form>;
+}
+
 function EditHeader(props: {children?: ReactElement | ReactElement[], name: string}) {
     const [visible, setVisible] = useState(false);
     
@@ -768,6 +1003,15 @@ function EditPage() {
             </EditHeader>
             <EditHeader name='Изменить факультет'>
                 <EditFaculty/>
+            </EditHeader>
+            <EditHeader name='Добавить кафедру'>
+                <AddDepartment/>
+            </EditHeader>
+            <EditHeader name='Удалить кафедру'>
+                <DeleteDepartment/>
+            </EditHeader>
+            <EditHeader name='Изменить кафедру'>
+                <EditDepartment/>
             </EditHeader>
         </ol>
     </>
