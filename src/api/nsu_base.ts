@@ -645,3 +645,41 @@ export async function editGroup(id: number, query: AddGroupQuery, abortSignal?: 
 	});
 	return get<Result>(response);
 }
+
+interface AddFacultyQuery {
+	name: string;
+}
+
+export async function addFaculty(query: AddFacultyQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/faculty/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function deleteFaculty(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/faculty/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function editFaculty(id: number, query: AddFacultyQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/faculty/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
