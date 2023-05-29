@@ -793,3 +793,63 @@ export async function editWork(id: number, query: AddWorkQuery, abortSignal?: Ab
 	});
 	return get<Result>(response);
 }
+
+interface AddMarkBody {
+	mark: number;
+	date: DateStruct;
+	studentId: number;
+	lessonId: number;
+}
+
+export async function addMark(query: AddMarkBody, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/mark/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function deleteMark(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/mark/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function editMark(id: number, query: AddMarkBody, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/mark/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export interface MarkString {
+	id: number;
+	mark: number;
+	lesson: string;
+	student: string;
+	lessonId: number;
+	studentId: number;
+	date: DateStruct;
+}
+
+export async function allMarks(abortSignal?: AbortSignal) {
+	const response = fetch(`/api/mark/all`,
+	{
+		method: 'GET',
+		signal: abortSignal
+	});
+	return get<MarkString[]>(response);
+}

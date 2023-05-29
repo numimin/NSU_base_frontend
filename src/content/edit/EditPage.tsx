@@ -2,7 +2,7 @@ import {useState, useEffect, ReactElement} from 'react';
 import Header from '../Header';
 import './EditPage.scss';
 import DateForm from '../forms/DateForm';
-import { Category, DateStruct, Department, Faculty, Gender, Group, SBoolean, Student, StudentGraduateWork, Teacher, addDepartment, addFaculty, addGroup, addStudent, addTeacher, addWork, deleteDepartment, deleteFaculty, deleteGroup, deleteWork, editDepartment, editFaculty, editGroup, editWork, getAllStudents, getAllTeachers, getDepartments, getFaculties, getGroups, getStudents, getStudentsOfCourseWithMarks, getStudentsWithGraduateWorks, getTeachers, getTeachersByGraduateWorks } from '../../api/nsu_base';
+import { Category, DateStruct, Department, Faculty, Gender, Group, Lesson, MarkString, SBoolean, Student, StudentGraduateWork, StudentsWithMarkQuery, Teacher, addDepartment, addFaculty, addGroup, addMark, addStudent, addTeacher, addWork, allMarks, deleteDepartment, deleteFaculty, deleteGroup, deleteMark, deleteWork, editDepartment, editFaculty, editGroup, editMark, editWork, getAllStudents, getAllTeachers, getDepartments, getFaculties, getGroups, getLessons, getStudents, getStudentsOfCourseWithMarks, getStudentsWithGraduateWorks, getTeachers, getTeachersByGraduateWorks } from '../../api/nsu_base';
 import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
 import { IdRadio, convertToItem, convertToItemWithFunction } from '../forms/IdCheckbox';
@@ -1264,6 +1264,308 @@ function EditWork() {
     </form>;
 }
 
+function AddMark() {
+    const [mark, setMark] = useState<number | null>(null);
+	const [lessonId, setLessonId] = useState<number | null>(null);
+	const [lessons, setLessons] = useState<Lesson[] | null>(null);
+	const [studentId, setStudentId] = useState<number | null>(null);
+	const [students, setStudents] = useState<Student[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [date, setDate] = useState<DateStruct | null>(null);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setLessons(await getLessons({groupId: null, course: null}, controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setStudents(await getAllStudents(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (!mark) {
+               alert("Оценка должна быть заполнена");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!lessonId) {
+            alert("Предмет не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!studentId) {
+            alert("Студент не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!date) {
+            alert("Дата не заполнена");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await addMark({
+                   mark: mark,
+                   date: date,
+                   lessonId: lessonId,
+                   studentId: studentId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <CheckedInput className="EditInput" name="Оценка" min={2} max={5} value={mark} onChange={newScholarship => {
+                setMark(newScholarship);
+            }}/>
+            <DateForm dateStruct={date || undefined} className='EditDate' name="Дата начала занятий" onChange={date => setDate(date)}/>
+			<IdRadio
+                className="EditRadio"
+				name="Предмет"
+				items={lessons?.map(convertToItem)}
+				id={lessonId}
+				setId={newIds => {
+					setLessonId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+			<IdRadio
+                className="EditRadio"
+				name="Студент"
+				items={students?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+				id={studentId}
+				setId={newIds => {
+					setStudentId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                {
+                    loadingStudent ? <div className='AddButton loading'>
+                        <img src="/icons/loading.png"/>
+                    </div> 
+                    : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
+                }
+                
+            </li>
+        </ol>
+    </form>;
+}
+
+function DeleteMark() {
+    const [marks, setMarks] = useState<MarkString[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [markId, setMarkId] = useState<number | null>(null);
+    const [update, setUpdate] = useState(true);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setMarks(await allMarks(controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+			<IdRadio
+                className="EditRadio"
+				name="Оценка"
+				items={marks?.map(w => convertToItemWithFunction(w, ww => ww.mark + ", " + ww.lesson + ", " + ww.student))}
+				id={markId}
+				setId={newIds => {
+					setMarkId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                <button type="button" className={'AddButton'} onClick={e => {
+                    (async () => {
+                        if (markId) {
+                            const response = await deleteMark(markId);
+                            alert(response?.message);
+                            setUpdate(true); 
+                        }
+                    })();
+                }}>Удалить</button>
+            </li>
+        </ol>
+    </form>;
+}
+
+function EditMark() {
+    const [id, setId] = useState<number | null>(null);
+    const [mark, setMark] = useState<number | null>(null);
+	const [lessonId, setLessonId] = useState<number | null>(null);
+	const [lessons, setLessons] = useState<Lesson[] | null>(null);
+	const [studentId, setStudentId] = useState<number | null>(null);
+	const [students, setStudents] = useState<Student[] | null>(null);
+    const [date, setDate] = useState<DateStruct | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [update, setUpdate] = useState(true);
+    const [marks, setMarks] = useState<MarkString[] | null>(null);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setMarks(await allMarks(controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setLessons(await getLessons({groupId: null, course: null}, controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setStudents(await getAllStudents(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (!mark) {
+               alert("Оценка должна быть заполнена");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!lessonId) {
+            alert("Преподаватель не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!studentId) {
+            alert("Студент не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!date) {
+            alert("Дата не заполнена");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!id) {
+            alert("Id must be not null");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await editMark(id, {
+                   mark: mark,
+                   date: date,
+                   lessonId: lessonId,
+                   studentId: studentId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+               setUpdate(true);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+			<IdRadio
+                className="EditRadio"
+				name="Оценка"
+				items={marks?.map(w => convertToItemWithFunction(w, ww => ww.mark + ", " + ww.lesson + ", " + ww.student))}
+				id={id}
+				setId={newIds => {
+					setId(newIds);
+                    marks?.forEach(g => {
+                        setMark(g.mark);
+                        setDate(g.date);
+                        console.log(g.date);
+                        setLessonId(g.lessonId);
+                        setStudentId(g.studentId);
+                    });
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+             {
+                id && <div>
+                    <CheckedInput className="EditInput" name="Оценка" min={2} max={5} value={mark} onChange={newScholarship => { setMark(newScholarship);
+                    }}/>
+                    <DateForm dateStruct={date || undefined} className='EditDate' name="Дата начала занятий" onChange={date => setDate(date)}/>
+                    <IdRadio
+                        className="EditRadio"
+                        name="Предмет"
+                        items={lessons?.map(convertToItem)}
+                        id={lessonId}
+                        setId={newIds => {
+                            setLessonId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <IdRadio
+                        className="EditRadio"
+                        name="Студент"
+                        items={students?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+                        id={studentId}
+                        setId={newIds => {
+                            setStudentId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <li className='AddButtonLi'>
+                        {
+                            loadingStudent ? <div className='AddButton loading'>
+                                <img src="/icons/loading.png"/>
+                            </div> 
+                            : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Изменить" : ""}</button>
+                        }
+                        
+                    </li>
+                </div>
+             }
+        </ol>
+    </form>;
+}
+
 function EditHeader(props: {children?: ReactElement | ReactElement[], name: string}) {
     const [visible, setVisible] = useState(false);
     
@@ -1322,6 +1624,15 @@ function EditPage() {
             </EditHeader>
             <EditHeader name='Изменить работу'>
                 <EditWork/>
+            </EditHeader>
+            <EditHeader name='Добавить оценку'>
+                <AddMark/>
+            </EditHeader>
+            <EditHeader name='Удалить оценку'>
+                <DeleteMark/>
+            </EditHeader>
+            <EditHeader name='Изменить оценку'>
+                <EditMark/>
             </EditHeader>
         </ol>
     </>
