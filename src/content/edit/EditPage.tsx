@@ -2,10 +2,11 @@ import {useState, useEffect, ReactElement} from 'react';
 import Header from '../Header';
 import './EditPage.scss';
 import DateForm from '../forms/DateForm';
-import { Category, DateStruct, Department, Faculty, Gender, Group, Lesson, MarkString, SBoolean, Student, StudentGraduateWork, StudentsWithMarkQuery, Teacher, addDepartment, addFaculty, addGroup, addMark, addStudent, addTeacher, addWork, allMarks, deleteDepartment, deleteFaculty, deleteGroup, deleteMark, deleteWork, editDepartment, editFaculty, editGroup, editMark, editWork, getAllStudents, getAllTeachers, getDepartments, getFaculties, getGroups, getLessons, getStudents, getStudentsOfCourseWithMarks, getStudentsWithGraduateWorks, getTeachers, getTeachersByGraduateWorks } from '../../api/nsu_base';
+import { Category, DateStruct, Department, Faculty, Gender, Group, Lesson, LessonType, MarkString, SBoolean, Student, StudentGraduateWork, StudentsWithMarkQuery, Teacher, addDepartment, addFaculty, addGroup, addMark, addStudent, addTeacher, addWork, allMarks, deleteDepartment, deleteFaculty, deleteGroup, deleteMark, deleteWork, editDepartment, editFaculty, editGroup, editMark, editWork, getAllStudents, getAllTeachers, getDepartments, getFaculties, getGroups, getLessons, getStudents, getStudentsOfCourseWithMarks, getStudentsWithGraduateWorks, getTeachers, getTeachersByGraduateWorks } from '../../api/nsu_base';
 import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
 import { IdRadio, convertToItem, convertToItemWithFunction } from '../forms/IdCheckbox';
+import { addLesson } from '../../api/nsu_base';
 
 function AddStudent() {
     const [name, setName] = useState("");
@@ -1566,6 +1567,340 @@ function EditMark() {
     </form>;
 }
 
+function AddLesson() {
+    const [name, setName] = useState("");
+	const [teacherId, setTeacherId] = useState<number | null>(null);
+	const [teachers, setTeachers] = useState<Teacher[] | null>(null);
+	const [groupId, setGroupId] = useState<number | null>(null);
+	const [groups, setGroups] = useState<Group[] | null>(null);
+    const [term, setTerm] = useState<number | null>(null);
+    const [course, setCourse] = useState<number | null>(null);
+    const [type, setType] = useState<LessonType>("LAB");
+    const [hours, setHours] = useState<number | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setTeachers(await getAllTeachers(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setGroups(await getGroups([], controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (name === "") {
+               alert("Имя должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!teacherId) {
+            alert("Предмет не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!groupId) {
+            alert("Студент не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!term) {
+            alert("Семестр не заполнен");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!course) {
+            alert("Курс не заполнен");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!hours) {
+            alert("Часы не заполнены");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await addLesson({
+                    name: name,
+                    teacherId: teacherId,
+                    groupId: groupId,
+                    term: term,
+                    course: course,
+                    type: type,
+                    hours: hours
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={name} onChange={e => setName(e.target.value)}/>
+            </li>
+            <CheckedInput className="EditInput" name="Семестр" min={1} max={8} value={term} onChange={newScholarship => { setTerm(newScholarship);
+            }}/>
+            <CheckedInput className="EditInput" name="Курс" min={1} max={4} value={course} onChange={newScholarship => { setCourse(newScholarship);
+            }}/>
+            <CheckedInput className="EditInput" name="Часы" min={1} value={hours} onChange={newScholarship => { setHours(newScholarship);
+            }}/>
+			<Select className='EditSelect' name="Тип"
+					options={[{name: "Лабораторная", value: "LAB"},
+							  {name: "Лекция", value: "LECTURE"},
+							  {name: "Практика", value: "PRACTICE"}
+                            ]} 
+					value={type}
+					onChange={value => {
+						setType(value as LessonType);
+					}}/>
+			<IdRadio
+                className="EditRadio"
+				name="Преподаватель"
+				items={teachers?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+				id={teacherId}
+				setId={newIds => {
+					setTeacherId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+			<IdRadio
+                className="EditRadio"
+				name="Группа"
+				items={groups?.map(convertToItem)}
+				id={groupId}
+				setId={newIds => {
+					setGroupId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                {
+                    loadingStudent ? <div className='AddButton loading'>
+                        <img src="/icons/loading.png"/>
+                    </div> 
+                    : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
+                }
+                
+            </li>
+        </ol>
+    </form>;
+}
+
+function DeleteLesson() {
+    const [marks, setMarks] = useState<MarkString[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [markId, setMarkId] = useState<number | null>(null);
+    const [update, setUpdate] = useState(true);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setMarks(await allMarks(controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+			<IdRadio
+                className="EditRadio"
+				name="Оценка"
+				items={marks?.map(w => convertToItemWithFunction(w, ww => ww.mark + ", " + ww.lesson + ", " + ww.student))}
+				id={markId}
+				setId={newIds => {
+					setMarkId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                <button type="button" className={'AddButton'} onClick={e => {
+                    (async () => {
+                        if (markId) {
+                            const response = await deleteMark(markId);
+                            alert(response?.message);
+                            setUpdate(true); 
+                        }
+                    })();
+                }}>Удалить</button>
+            </li>
+        </ol>
+    </form>;
+}
+
+function EditLesson() {
+    const [id, setId] = useState<number | null>(null);
+    const [mark, setMark] = useState<number | null>(null);
+	const [lessonId, setLessonId] = useState<number | null>(null);
+	const [lessons, setLessons] = useState<Lesson[] | null>(null);
+	const [studentId, setStudentId] = useState<number | null>(null);
+	const [students, setStudents] = useState<Student[] | null>(null);
+    const [date, setDate] = useState<DateStruct | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [update, setUpdate] = useState(true);
+    const [marks, setMarks] = useState<MarkString[] | null>(null);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setMarks(await allMarks(controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setLessons(await getLessons({groupId: null, course: null}, controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setStudents(await getAllStudents(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (!mark) {
+               alert("Оценка должна быть заполнена");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!lessonId) {
+            alert("Преподаватель не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!studentId) {
+            alert("Студент не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!date) {
+            alert("Дата не заполнена");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!id) {
+            alert("Id must be not null");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await editMark(id, {
+                   mark: mark,
+                   date: date,
+                   lessonId: lessonId,
+                   studentId: studentId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+               setUpdate(true);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+			<IdRadio
+                className="EditRadio"
+				name="Оценка"
+				items={marks?.map(w => convertToItemWithFunction(w, ww => ww.mark + ", " + ww.lesson + ", " + ww.student))}
+				id={id}
+				setId={newIds => {
+					setId(newIds);
+                    marks?.forEach(g => {
+                        setMark(g.mark);
+                        setDate(g.date);
+                        console.log(g.date);
+                        setLessonId(g.lessonId);
+                        setStudentId(g.studentId);
+                    });
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+             {
+                id && <div>
+                    <CheckedInput className="EditInput" name="Оценка" min={2} max={5} value={mark} onChange={newScholarship => { setMark(newScholarship);
+                    }}/>
+                    <DateForm dateStruct={date || undefined} className='EditDate' name="Дата начала занятий" onChange={date => setDate(date)}/>
+                    <IdRadio
+                        className="EditRadio"
+                        name="Предмет"
+                        items={lessons?.map(convertToItem)}
+                        id={lessonId}
+                        setId={newIds => {
+                            setLessonId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <IdRadio
+                        className="EditRadio"
+                        name="Студент"
+                        items={students?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+                        id={studentId}
+                        setId={newIds => {
+                            setStudentId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <li className='AddButtonLi'>
+                        {
+                            loadingStudent ? <div className='AddButton loading'>
+                                <img src="/icons/loading.png"/>
+                            </div> 
+                            : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Изменить" : ""}</button>
+                        }
+                        
+                    </li>
+                </div>
+             }
+        </ol>
+    </form>;
+}
+
+
 function EditHeader(props: {children?: ReactElement | ReactElement[], name: string}) {
     const [visible, setVisible] = useState(false);
     
@@ -1633,6 +1968,15 @@ function EditPage() {
             </EditHeader>
             <EditHeader name='Изменить оценку'>
                 <EditMark/>
+            </EditHeader>
+            <EditHeader name='Добавить предмет'>
+                <AddLesson/>
+            </EditHeader>
+            <EditHeader name='Удалить предмет'>
+                <DeleteLesson/>
+            </EditHeader>
+            <EditHeader name='Изменить предмет'>
+                <EditLesson/>
             </EditHeader>
         </ol>
     </>

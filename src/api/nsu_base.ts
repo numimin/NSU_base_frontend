@@ -853,3 +853,47 @@ export async function allMarks(abortSignal?: AbortSignal) {
 	});
 	return get<MarkString[]>(response);
 }
+
+export interface AddLessonBody {
+	name: string;
+	teacherId: number;
+	groupId: number;
+	term: number;
+	course: number;
+	type: LessonType;
+	hours: number;
+}
+
+export async function addLesson(query: AddLessonBody, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/lesson/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function deleteLesson(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/lesson/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function editLesson(id: number, query: AddLessonBody, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/lesson/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
