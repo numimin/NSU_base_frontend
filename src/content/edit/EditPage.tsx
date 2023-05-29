@@ -2,10 +2,10 @@ import {useState, useEffect, ReactElement} from 'react';
 import Header from '../Header';
 import './EditPage.scss';
 import DateForm from '../forms/DateForm';
-import { Category, DateStruct, Department, Faculty, Gender, Group, SBoolean, addDepartment, addFaculty, addGroup, addStudent, addTeacher, deleteDepartment, deleteFaculty, deleteGroup, editDepartment, editFaculty, editGroup, getDepartments, getFaculties, getGroups } from '../../api/nsu_base';
+import { Category, DateStruct, Department, Faculty, Gender, Group, SBoolean, Student, StudentGraduateWork, Teacher, addDepartment, addFaculty, addGroup, addStudent, addTeacher, addWork, deleteDepartment, deleteFaculty, deleteGroup, deleteWork, editDepartment, editFaculty, editGroup, editWork, getAllStudents, getAllTeachers, getDepartments, getFaculties, getGroups, getStudents, getStudentsOfCourseWithMarks, getStudentsWithGraduateWorks, getTeachers, getTeachersByGraduateWorks } from '../../api/nsu_base';
 import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
-import { IdRadio, convertToItem } from '../forms/IdCheckbox';
+import { IdRadio, convertToItem, convertToItemWithFunction } from '../forms/IdCheckbox';
 
 function AddStudent() {
     const [name, setName] = useState("");
@@ -963,6 +963,307 @@ function EditDepartment() {
     </form>;
 }
 
+function AddWork() {
+    const [theme, setTheme] = useState("");
+	const [teacherId, setTeacherId] = useState<number | null>(null);
+	const [teachers, setTeachers] = useState<Teacher[] | null>(null);
+	const [studentId, setStudentId] = useState<number | null>(null);
+	const [students, setStudents] = useState<Student[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setTeachers(await getAllTeachers(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setStudents(await getAllStudents(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (theme === "") {
+               alert("Название должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!teacherId) {
+            alert("Преподаватель не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!studentId) {
+            alert("Студент не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await addWork({
+                   theme: theme,
+                   teacherId: teacherId,
+                   studentId: studentId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={theme} onChange={e => setTheme(e.target.value)}/>
+            </li>
+			<IdRadio
+                className="EditRadio"
+				name="Преподаватель"
+				items={teachers?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+				id={teacherId}
+				setId={newIds => {
+					setTeacherId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+			<IdRadio
+                className="EditRadio"
+				name="Студент"
+				items={students?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+				id={studentId}
+				setId={newIds => {
+					setStudentId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                {
+                    loadingStudent ? <div className='AddButton loading'>
+                        <img src="/icons/loading.png"/>
+                    </div> 
+                    : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Добавить" : ""}</button>
+                }
+                
+            </li>
+        </ol>
+    </form>;
+}
+
+function DeleteWork() {
+    const [theme, setTheme] = useState("");
+    const [works, setWorks] = useState<StudentGraduateWork[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [workId, setWorkId] = useState<number | null>(null);
+    const [update, setUpdate] = useState(true);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setWorks(await getStudentsWithGraduateWorks({
+                    departmentId: null,
+                    teacherId: null
+                }, controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+            <li className='TextInput'>
+                <label htmlFor='name'><strong>Имя:</strong></label>
+                <input value={theme} onChange={e => setTheme(e.target.value)}/>
+            </li>
+			<IdRadio
+                className="EditRadio"
+				name="Работа"
+				items={works?.filter(g => {
+                    return theme === "" || g.graduateWorkTheme === theme;
+                })
+                .map(w => convertToItemWithFunction(w, ww => ww.graduateWorkTheme))}
+				id={workId}
+				setId={newIds => {
+					setWorkId(newIds);
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+            <li className='AddButtonLi'>
+                <button type="button" className={'AddButton'} onClick={e => {
+                    (async () => {
+                        if (workId) {
+                            const response = await deleteWork(workId);
+                            alert(response?.message);
+                            setUpdate(true); 
+                        }
+                    })();
+                }}>Удалить</button>
+            </li>
+        </ol>
+    </form>;
+}
+
+function EditWork() {
+    const [id, setId] = useState<number | null>(null);
+    const [theme, setTheme] = useState("");
+	const [teacherId, setTeacherId] = useState<number | null>(null);
+	const [teachers, setTeachers] = useState<Teacher[] | null>(null);
+	const [studentId, setStudentId] = useState<number | null>(null);
+	const [students, setStudents] = useState<Student[] | null>(null);
+	const [firstVisible, setFirstVisible] = useState(false);
+    const [update, setUpdate] = useState(true);
+    const [works, setWorks] = useState<StudentGraduateWork[] | null>(null);
+    
+    const [loadingStudent, setLoadingStudent] = useState(false);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible && update) {
+			(async () => {
+				setWorks(await getStudentsWithGraduateWorks({
+                    departmentId: null,
+                    teacherId: null
+                }, controller.signal));
+				controller = null;
+                setUpdate(false);
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible, update]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setTeachers(await getAllTeachers(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+	useEffect(() => {
+		let controller: AbortController | null = new AbortController();
+		if (firstVisible) {
+			(async () => {
+				setStudents(await getAllStudents(controller.signal));
+				controller = null;
+			}) ();
+		}
+		return () => controller?.abort();
+	}, [firstVisible]);
+
+    useEffect(() => {
+       if (loadingStudent) {
+           if (theme === "") {
+               alert("Название должно быть заполнено");
+               setLoadingStudent(false);
+               return;
+           }
+           if (!teacherId) {
+            alert("Преподаватель не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!studentId) {
+            alert("Студент не выбран");
+            setLoadingStudent(false);
+            return;
+           }
+           if (!id) {
+            alert("Id must be not null");
+            setLoadingStudent(false);
+            return;
+           }
+
+           (async () => {
+               const response = await editWork(id, {
+                   theme: theme,
+                   teacherId: teacherId,
+                   studentId: studentId,
+               });
+               alert(response?.message);
+               setLoadingStudent(false);
+               setUpdate(true);
+           })(); 
+       } 
+    }, [loadingStudent]);
+
+    return <form className='Form EditForm'>
+        <ol className='FormContent'>
+			<IdRadio
+                className="EditRadio"
+				name="Работа"
+				items={works?.map(w => convertToItemWithFunction(w, ww => ww.graduateWorkTheme))}
+				id={id}
+				setId={newIds => {
+					setId(newIds);
+                    works?.filter(g => g.id === newIds).forEach(g => {
+                        setTheme(g.graduateWorkTheme);
+                        setTeacherId(g.teacherId);
+                        setStudentId(g.studentId);
+                    });
+				}}
+				callback={() => setFirstVisible(true)}
+				/>
+             {
+                id && <div>
+                    <li className='TextInput'>
+                        <label htmlFor='name'><strong>Имя:</strong></label>
+                        <input value={theme} onChange={e => setTheme(e.target.value)}/>
+                    </li>
+                    <IdRadio
+                        className="EditRadio"
+                        name="Преподаватель"
+                        items={teachers?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+                        id={teacherId}
+                        setId={newIds => {
+                            setTeacherId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <IdRadio
+                        className="EditRadio"
+                        name="Студент"
+                        items={students?.map(s => convertToItemWithFunction(s, (ss) => `${ss.firstname} ${ss.lastname} ${ss.patronymic}`))}
+                        id={studentId}
+                        setId={newIds => {
+                            setStudentId(newIds);
+                        }}
+                        callback={() => setFirstVisible(true)}
+                        />
+                    <li className='AddButtonLi'>
+                        {
+                            loadingStudent ? <div className='AddButton loading'>
+                                <img src="/icons/loading.png"/>
+                            </div> 
+                            : <button type="button" className={'AddButton' + (loadingStudent ? " loading" : "")} onClick={e => setLoadingStudent(true)}>{!loadingStudent ?  "Изменить" : ""}</button>
+                        }
+                        
+                    </li>
+                </div>
+             }
+        </ol>
+    </form>;
+}
+
 function EditHeader(props: {children?: ReactElement | ReactElement[], name: string}) {
     const [visible, setVisible] = useState(false);
     
@@ -1012,6 +1313,15 @@ function EditPage() {
             </EditHeader>
             <EditHeader name='Изменить кафедру'>
                 <EditDepartment/>
+            </EditHeader>
+            <EditHeader name='Добавить работу'>
+                <AddWork/>
+            </EditHeader>
+            <EditHeader name='Удалить работу'>
+                <DeleteWork/>
+            </EditHeader>
+            <EditHeader name='Изменить работу'>
+                <EditWork/>
             </EditHeader>
         </ol>
     </>

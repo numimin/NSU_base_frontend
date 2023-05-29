@@ -14,6 +14,19 @@ export interface StudentQuery {
 	facultyIds: number[];
 }
 
+export async function getAllStudents(signal: AbortSignal) {
+	return await getStudents({
+		gender: "NONE",
+		year: null,
+		age: null,
+		hasChildren: "NONE",
+		minScholarship: null,
+		maxScholarship: null,
+		groupIds: [],
+		facultyIds: []
+	}, signal);
+}
+
 export interface Student {
 	id: number;
 	firstname: string;
@@ -163,6 +176,21 @@ export interface Department {
 
 export interface DepartmentsQuery {
 	facultyIds: number[];
+}
+
+export async function getAllTeachers(abortSignal: AbortSignal) {
+	return await getTeachers({
+		category: "NONE",
+		gender: "NONE",
+		hasChildren: "NONE",
+		minSalary: null,
+		maxSalary: null,
+		graduateStudent: "NONE",
+		facultyIds: [],
+		departmentIds: [],
+		phdThesisStartDate: null,
+		phdThesisEndDate: null
+	}, abortSignal);
 }
 
 export async function getTeachers(query: TeachersQuery, abortSignal: AbortSignal): Promise<Teacher[] | null> {
@@ -454,6 +482,9 @@ export interface StudentsGraduateWorksQuery {
 export interface StudentGraduateWork {
 	student: Student;
 	graduateWorkTheme: string;
+	id: number;
+	teacherId: number;
+	studentId: number;
 }
 
 export async function getStudentsWithGraduateWorks(query: StudentsGraduateWorksQuery, abortSignal: AbortSignal) {
@@ -712,6 +743,46 @@ export async function deleteDepartment(id: number, abortSignal?: AbortSignal): P
 
 export async function editDepartment(id: number, query: AddDepartmentQuery, abortSignal?: AbortSignal): Promise<Result | null> {
 	const response = fetch(`/api/department/update?id=${id}`,
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+interface AddWorkQuery {
+	theme: string;
+	teacherId: number;
+	studentId: number;
+}
+
+export async function addWork(query: AddWorkQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch('/api/work/add',
+	{
+		method: 'POST',
+		headers: {
+			"Content-Type": "application/json"
+		},
+		body: JSON.stringify(query),
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function deleteWork(id: number, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/work/delete?id=${id}`, {
+		method: "POST",
+		signal: abortSignal
+	});
+	return get<Result>(response);
+}
+
+export async function editWork(id: number, query: AddWorkQuery, abortSignal?: AbortSignal): Promise<Result | null> {
+	const response = fetch(`/api/work/update?id=${id}`,
 	{
 		method: 'POST',
 		headers: {
