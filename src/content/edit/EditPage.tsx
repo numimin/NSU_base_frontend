@@ -7,6 +7,7 @@ import { Select } from '../forms/Select';
 import CheckedInput from '../forms/CheckedInput';
 import { IdRadio, convertToItem, convertToItemWithFunction } from '../forms/IdCheckbox';
 import { addLesson } from '../../api/nsu_base';
+import { deleteLesson } from '../../api/nsu_base';
 
 function AddStudent() {
     const [name, setName] = useState("");
@@ -1707,16 +1708,16 @@ function AddLesson() {
 }
 
 function DeleteLesson() {
-    const [marks, setMarks] = useState<MarkString[] | null>(null);
+    const [lessons, setLessons] = useState<Lesson[] | null>(null);
 	const [firstVisible, setFirstVisible] = useState(false);
-    const [markId, setMarkId] = useState<number | null>(null);
+    const [id, setId] = useState<number | null>(null);
     const [update, setUpdate] = useState(true);
 
 	useEffect(() => {
 		let controller: AbortController | null = new AbortController();
 		if (firstVisible && update) {
 			(async () => {
-				setMarks(await allMarks(controller.signal));
+				setLessons(await getLessons({groupId: null, course: null}, controller.signal));
 				controller = null;
                 setUpdate(false);
 			}) ();
@@ -1728,19 +1729,19 @@ function DeleteLesson() {
         <ol className='FormContent'>
 			<IdRadio
                 className="EditRadio"
-				name="Оценка"
-				items={marks?.map(w => convertToItemWithFunction(w, ww => ww.mark + ", " + ww.lesson + ", " + ww.student))}
-				id={markId}
+				name="Предмет"
+				items={lessons?.map(convertToItem)}
+				id={id}
 				setId={newIds => {
-					setMarkId(newIds);
+					setId(newIds);
 				}}
 				callback={() => setFirstVisible(true)}
 				/>
             <li className='AddButtonLi'>
                 <button type="button" className={'AddButton'} onClick={e => {
                     (async () => {
-                        if (markId) {
-                            const response = await deleteMark(markId);
+                        if (id) {
+                            const response = await deleteLesson(id);
                             alert(response?.message);
                             setUpdate(true); 
                         }
